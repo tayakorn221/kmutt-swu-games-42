@@ -365,11 +365,13 @@ function matchHTML(m){
     oppBlock='<div class="side"><div class="who"><div class="nm" style="color:var(--wait)">รอคู่แข่ง</div><div class="uni">รอผลการแข่งรอบก่อนหน้า</div></div></div>';}
   else{divider='พบ';oppBlock=sideHTML(oppNames,oppUni,false);}
   const badge=isTbd?'<span class="res wait">⏳ รอคู่แข่ง</span>':`<span class="res ${cls}">${rlabel(cls)}</span>`;
+  // บายไม่มีเวลาแข่ง (ผ่านเข้ารอบฟรี) จึงไม่แสดงบรรทัดเวลา
+  const whenHTML=isBye?'':(time?`<span class="t">${time} น.</span>`:'<span>ยังไม่กำหนดเวลา</span>');
   return `<div class="match r-${cls}">
     <div class="m-top">
       <span class="ev">${esc(m.event)}</span>
       <span class="rnd">${esc(roundTH(m.round))}</span>
-      <span class="m-when">${time?`<span class="t">${time} น.</span>`:'<span>ยังไม่กำหนดเวลา</span>'}</span>
+      <span class="m-when">${whenHTML}</span>
     </div>
     ${sideHTML(m.kmutt,"",true)}
     <div class="vs"><span class="ln"></span><span>${divider}</span><span class="ln"></span></div>
