@@ -498,6 +498,192 @@
       "score": ""
     },
     {
+      "match_id": "",
+      "event": "MDทั่วไป",
+      "round": "Round of 128",
+      "datetime": {
+        "th": "อา. 31/5/2569",
+        "iso": "2026-05-31"
+      },
+      "court": "",
+      "kmutt_players": [
+        {
+          "name": "DR.MANOVA STEPHENRAJ",
+          "id": "22"
+        },
+        {
+          "name": "ธีรภัทร เขษมเวสารัชวุฒิ",
+          "id": "24"
+        }
+      ],
+      "tbd": false,
+      "opponents": [
+        {
+          "name": "Bye",
+          "uni": "",
+          "id": ""
+        }
+      ],
+      "result": "บาย",
+      "score": "",
+      "bye_day_inferred": true
+    },
+    {
+      "match_id": "",
+      "event": "MDทั่วไป",
+      "round": "Round of 128",
+      "datetime": {
+        "th": "อา. 31/5/2569",
+        "iso": "2026-05-31"
+      },
+      "court": "",
+      "kmutt_players": [
+        {
+          "name": "ทยากร มหกรเพชร",
+          "id": "552"
+        },
+        {
+          "name": "ผศ.ดร. อธิป ดุลย์จินดาชบาพร",
+          "id": "551"
+        }
+      ],
+      "tbd": false,
+      "opponents": [
+        {
+          "name": "Bye",
+          "uni": "",
+          "id": ""
+        }
+      ],
+      "result": "บาย",
+      "score": "",
+      "bye_day_inferred": true
+    },
+    {
+      "match_id": "",
+      "event": "XD40",
+      "round": "Round of 128",
+      "datetime": {
+        "th": "อา. 31/5/2569",
+        "iso": "2026-05-31"
+      },
+      "court": "",
+      "kmutt_players": [
+        {
+          "name": "วรทัศน์ บุญไข่",
+          "id": "262"
+        },
+        {
+          "name": "ดร. ปริยาภัทร นิลสลับ",
+          "id": "261"
+        }
+      ],
+      "tbd": false,
+      "opponents": [
+        {
+          "name": "Bye",
+          "uni": "",
+          "id": ""
+        }
+      ],
+      "result": "บาย",
+      "score": "",
+      "bye_day_inferred": true
+    },
+    {
+      "match_id": "",
+      "event": "XD40",
+      "round": "Round of 128",
+      "datetime": {
+        "th": "อา. 31/5/2569",
+        "iso": "2026-05-31"
+      },
+      "court": "",
+      "kmutt_players": [
+        {
+          "name": "รศ.ดร. อธิปัตย์ บุญเหมาะ",
+          "id": "260"
+        },
+        {
+          "name": "นิชาพร ยอดมณี",
+          "id": "259"
+        }
+      ],
+      "tbd": false,
+      "opponents": [
+        {
+          "name": "Bye",
+          "uni": "",
+          "id": ""
+        }
+      ],
+      "result": "บาย",
+      "score": "",
+      "bye_day_inferred": true
+    },
+    {
+      "match_id": "",
+      "event": "XDทั่วไป",
+      "round": "Round of 128",
+      "datetime": {
+        "th": "อา. 31/5/2569",
+        "iso": "2026-05-31"
+      },
+      "court": "",
+      "kmutt_players": [
+        {
+          "name": "DR.MANOVA STEPHENRAJ",
+          "id": "22"
+        },
+        {
+          "name": "ปัณฑ์ณธร สั้นป้อม",
+          "id": "21"
+        }
+      ],
+      "tbd": false,
+      "opponents": [
+        {
+          "name": "Bye",
+          "uni": "",
+          "id": ""
+        }
+      ],
+      "result": "บาย",
+      "score": "",
+      "bye_day_inferred": true
+    },
+    {
+      "match_id": "",
+      "event": "XDทั่วไป",
+      "round": "Round of 128",
+      "datetime": {
+        "th": "อา. 31/5/2569",
+        "iso": "2026-05-31"
+      },
+      "court": "",
+      "kmutt_players": [
+        {
+          "name": "ธีรภัทร เขษมเวสารัชวุฒิ",
+          "id": "24"
+        },
+        {
+          "name": "ดร.สุณิสา สถาพรวจนา",
+          "id": "23"
+        }
+      ],
+      "tbd": false,
+      "opponents": [
+        {
+          "name": "Bye",
+          "uni": "",
+          "id": ""
+        }
+      ],
+      "result": "บาย",
+      "score": "",
+      "bye_day_inferred": true
+    },
+    {
       "match_id": "3745",
       "event": "MD40",
       "round": "Round of 64",
@@ -803,6 +989,161 @@
       "score": ""
     },
     {
+      "match_id": "",
+      "event": "MD35",
+      "round": "Round of 128",
+      "datetime": {
+        "th": "จ. 1/6/2569",
+        "iso": "2026-06-01"
+      },
+      "court": "",
+      "kmutt_players": [
+        {
+          "name": "ปรัชญา ภาคแก้ว",
+          "id": "637"
+        },
+        {
+          "name": "ผศ.ดร. สุธิวัชร ศุภลักษณ์",
+          "id": "638"
+        }
+      ],
+      "tbd": false,
+      "opponents": [
+        {
+          "name": "Bye",
+          "uni": "",
+          "id": ""
+        }
+      ],
+      "result": "บาย",
+      "score": "",
+      "bye_day_inferred": true
+    },
+    {
+      "match_id": "",
+      "event": "MD40",
+      "round": "Round of 128",
+      "datetime": {
+        "th": "จ. 1/6/2569",
+        "iso": "2026-06-01"
+      },
+      "court": "",
+      "kmutt_players": [
+        {
+          "name": "ผศ.ดร. สุธิวัชร ศุภลักษณ์",
+          "id": "638"
+        },
+        {
+          "name": "วรทัศน์ บุญไข่",
+          "id": "262"
+        }
+      ],
+      "tbd": false,
+      "opponents": [
+        {
+          "name": "Bye",
+          "uni": "",
+          "id": ""
+        }
+      ],
+      "result": "บาย",
+      "score": "",
+      "bye_day_inferred": true
+    },
+    {
+      "match_id": "",
+      "event": "XD45",
+      "round": "Round of 64",
+      "datetime": {
+        "th": "จ. 1/6/2569",
+        "iso": "2026-06-01"
+      },
+      "court": "",
+      "kmutt_players": [
+        {
+          "name": "สัญญา คงทอง",
+          "id": "372"
+        },
+        {
+          "name": "มัทนพรรณ จิ๋วเจียม",
+          "id": "373"
+        }
+      ],
+      "tbd": false,
+      "opponents": [
+        {
+          "name": "Bye",
+          "uni": "",
+          "id": ""
+        }
+      ],
+      "result": "บาย",
+      "score": "",
+      "bye_day_inferred": true
+    },
+    {
+      "match_id": "",
+      "event": "XD45",
+      "round": "Round of 64",
+      "datetime": {
+        "th": "จ. 1/6/2569",
+        "iso": "2026-06-01"
+      },
+      "court": "",
+      "kmutt_players": [
+        {
+          "name": "สุทธิพงษ์ โสภา",
+          "id": "370"
+        },
+        {
+          "name": "วิชชุดา เต๊ะดอเลาะ",
+          "id": "371"
+        }
+      ],
+      "tbd": false,
+      "opponents": [
+        {
+          "name": "Bye",
+          "uni": "",
+          "id": ""
+        }
+      ],
+      "result": "บาย",
+      "score": "",
+      "bye_day_inferred": true
+    },
+    {
+      "match_id": "",
+      "event": "XD50",
+      "round": "Round of 64",
+      "datetime": {
+        "th": "จ. 1/6/2569",
+        "iso": "2026-06-01"
+      },
+      "court": "",
+      "kmutt_players": [
+        {
+          "name": "ผศ.ดร. พิเชษฐ์ พินิจ",
+          "id": "462"
+        },
+        {
+          "name": "ดรุณี พินิจ",
+          "id": "461"
+        }
+      ],
+      "tbd": false,
+      "opponents": [
+        {
+          "name": "Bye",
+          "uni": "",
+          "id": ""
+        }
+      ],
+      "result": "บาย",
+      "score": "",
+      "bye_day_inferred": true
+    },
+    {
       "match_id": "3973",
       "event": "WD40",
       "round": "Round of 32",
@@ -909,131 +1250,11 @@
     },
     {
       "match_id": "",
-      "event": "MD35",
-      "round": "Round of 128",
-      "datetime": {
-        "th": "",
-        "iso": ""
-      },
-      "court": "",
-      "kmutt_players": [
-        {
-          "name": "ปรัชญา ภาคแก้ว",
-          "id": "637"
-        },
-        {
-          "name": "ผศ.ดร. สุธิวัชร ศุภลักษณ์",
-          "id": "638"
-        }
-      ],
-      "tbd": false,
-      "opponents": [
-        {
-          "name": "Bye",
-          "uni": "",
-          "id": ""
-        }
-      ],
-      "result": "บาย",
-      "score": ""
-    },
-    {
-      "match_id": "",
-      "event": "MD40",
-      "round": "Round of 128",
-      "datetime": {
-        "th": "",
-        "iso": ""
-      },
-      "court": "",
-      "kmutt_players": [
-        {
-          "name": "ผศ.ดร. สุธิวัชร ศุภลักษณ์",
-          "id": "638"
-        },
-        {
-          "name": "วรทัศน์ บุญไข่",
-          "id": "262"
-        }
-      ],
-      "tbd": false,
-      "opponents": [
-        {
-          "name": "Bye",
-          "uni": "",
-          "id": ""
-        }
-      ],
-      "result": "บาย",
-      "score": ""
-    },
-    {
-      "match_id": "",
-      "event": "MDทั่วไป",
-      "round": "Round of 128",
-      "datetime": {
-        "th": "",
-        "iso": ""
-      },
-      "court": "",
-      "kmutt_players": [
-        {
-          "name": "DR.MANOVA STEPHENRAJ",
-          "id": "22"
-        },
-        {
-          "name": "ธีรภัทร เขษมเวสารัชวุฒิ",
-          "id": "24"
-        }
-      ],
-      "tbd": false,
-      "opponents": [
-        {
-          "name": "Bye",
-          "uni": "",
-          "id": ""
-        }
-      ],
-      "result": "บาย",
-      "score": ""
-    },
-    {
-      "match_id": "",
-      "event": "MDทั่วไป",
-      "round": "Round of 128",
-      "datetime": {
-        "th": "",
-        "iso": ""
-      },
-      "court": "",
-      "kmutt_players": [
-        {
-          "name": "ทยากร มหกรเพชร",
-          "id": "552"
-        },
-        {
-          "name": "ผศ.ดร. อธิป ดุลย์จินดาชบาพร",
-          "id": "551"
-        }
-      ],
-      "tbd": false,
-      "opponents": [
-        {
-          "name": "Bye",
-          "uni": "",
-          "id": ""
-        }
-      ],
-      "result": "บาย",
-      "score": ""
-    },
-    {
-      "match_id": "",
       "event": "WD35",
       "round": "Round of 64",
       "datetime": {
-        "th": "",
-        "iso": ""
+        "th": "อ. 2/6/2569",
+        "iso": "2026-06-02"
       },
       "court": "",
       "kmutt_players": [
@@ -1055,15 +1276,16 @@
         }
       ],
       "result": "บาย",
-      "score": ""
+      "score": "",
+      "bye_day_inferred": true
     },
     {
       "match_id": "",
       "event": "WD35",
       "round": "Round of 64",
       "datetime": {
-        "th": "",
-        "iso": ""
+        "th": "อ. 2/6/2569",
+        "iso": "2026-06-02"
       },
       "court": "",
       "kmutt_players": [
@@ -1085,15 +1307,16 @@
         }
       ],
       "result": "บาย",
-      "score": ""
+      "score": "",
+      "bye_day_inferred": true
     },
     {
       "match_id": "",
       "event": "WD40",
       "round": "Round of 64",
       "datetime": {
-        "th": "",
-        "iso": ""
+        "th": "อ. 2/6/2569",
+        "iso": "2026-06-02"
       },
       "court": "",
       "kmutt_players": [
@@ -1115,217 +1338,8 @@
         }
       ],
       "result": "บาย",
-      "score": ""
-    },
-    {
-      "match_id": "",
-      "event": "XD40",
-      "round": "Round of 128",
-      "datetime": {
-        "th": "",
-        "iso": ""
-      },
-      "court": "",
-      "kmutt_players": [
-        {
-          "name": "วรทัศน์ บุญไข่",
-          "id": "262"
-        },
-        {
-          "name": "ดร. ปริยาภัทร นิลสลับ",
-          "id": "261"
-        }
-      ],
-      "tbd": false,
-      "opponents": [
-        {
-          "name": "Bye",
-          "uni": "",
-          "id": ""
-        }
-      ],
-      "result": "บาย",
-      "score": ""
-    },
-    {
-      "match_id": "",
-      "event": "XD40",
-      "round": "Round of 128",
-      "datetime": {
-        "th": "",
-        "iso": ""
-      },
-      "court": "",
-      "kmutt_players": [
-        {
-          "name": "รศ.ดร. อธิปัตย์ บุญเหมาะ",
-          "id": "260"
-        },
-        {
-          "name": "นิชาพร ยอดมณี",
-          "id": "259"
-        }
-      ],
-      "tbd": false,
-      "opponents": [
-        {
-          "name": "Bye",
-          "uni": "",
-          "id": ""
-        }
-      ],
-      "result": "บาย",
-      "score": ""
-    },
-    {
-      "match_id": "",
-      "event": "XD45",
-      "round": "Round of 64",
-      "datetime": {
-        "th": "",
-        "iso": ""
-      },
-      "court": "",
-      "kmutt_players": [
-        {
-          "name": "สัญญา คงทอง",
-          "id": "372"
-        },
-        {
-          "name": "มัทนพรรณ จิ๋วเจียม",
-          "id": "373"
-        }
-      ],
-      "tbd": false,
-      "opponents": [
-        {
-          "name": "Bye",
-          "uni": "",
-          "id": ""
-        }
-      ],
-      "result": "บาย",
-      "score": ""
-    },
-    {
-      "match_id": "",
-      "event": "XD45",
-      "round": "Round of 64",
-      "datetime": {
-        "th": "",
-        "iso": ""
-      },
-      "court": "",
-      "kmutt_players": [
-        {
-          "name": "สุทธิพงษ์ โสภา",
-          "id": "370"
-        },
-        {
-          "name": "วิชชุดา เต๊ะดอเลาะ",
-          "id": "371"
-        }
-      ],
-      "tbd": false,
-      "opponents": [
-        {
-          "name": "Bye",
-          "uni": "",
-          "id": ""
-        }
-      ],
-      "result": "บาย",
-      "score": ""
-    },
-    {
-      "match_id": "",
-      "event": "XD50",
-      "round": "Round of 64",
-      "datetime": {
-        "th": "",
-        "iso": ""
-      },
-      "court": "",
-      "kmutt_players": [
-        {
-          "name": "ผศ.ดร. พิเชษฐ์ พินิจ",
-          "id": "462"
-        },
-        {
-          "name": "ดรุณี พินิจ",
-          "id": "461"
-        }
-      ],
-      "tbd": false,
-      "opponents": [
-        {
-          "name": "Bye",
-          "uni": "",
-          "id": ""
-        }
-      ],
-      "result": "บาย",
-      "score": ""
-    },
-    {
-      "match_id": "",
-      "event": "XDทั่วไป",
-      "round": "Round of 128",
-      "datetime": {
-        "th": "",
-        "iso": ""
-      },
-      "court": "",
-      "kmutt_players": [
-        {
-          "name": "DR.MANOVA STEPHENRAJ",
-          "id": "22"
-        },
-        {
-          "name": "ปัณฑ์ณธร สั้นป้อม",
-          "id": "21"
-        }
-      ],
-      "tbd": false,
-      "opponents": [
-        {
-          "name": "Bye",
-          "uni": "",
-          "id": ""
-        }
-      ],
-      "result": "บาย",
-      "score": ""
-    },
-    {
-      "match_id": "",
-      "event": "XDทั่วไป",
-      "round": "Round of 128",
-      "datetime": {
-        "th": "",
-        "iso": ""
-      },
-      "court": "",
-      "kmutt_players": [
-        {
-          "name": "ธีรภัทร เขษมเวสารัชวุฒิ",
-          "id": "24"
-        },
-        {
-          "name": "ดร.สุณิสา สถาพรวจนา",
-          "id": "23"
-        }
-      ],
-      "tbd": false,
-      "opponents": [
-        {
-          "name": "Bye",
-          "uni": "",
-          "id": ""
-        }
-      ],
-      "result": "บาย",
-      "score": ""
+      "score": "",
+      "bye_day_inferred": true
     }
   ]
 }

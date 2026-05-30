@@ -206,8 +206,31 @@ for k, mt in matches.items():
     rec["score"] = ""  # สกอร์ยังไม่เผยแพร่ — กรอกเองได้
     out["matches"].append(rec)
 
-# sort matches by iso datetime then event
-out["matches"].sort(key=lambda r: (r["datetime"]["iso"] or "9999", r["event"], r["round"]))
+# จัด "บาย" เข้าวัน ตามวันของแมตช์จริงของคู่เดิม+ประเภทเดิม
+# (บายไม่มีวันในระบบ แต่ผูกกับวันที่คู่นั้นเริ่มลงสนามได้)
+dated_day = {}  # (event, frozenset(ชื่อคู่)) -> (iso_date, th_date)
+for m in out["matches"]:
+    if m["datetime"]["iso"] and m["result"] != "บาย":
+        key = (m["event"], frozenset(p["name"] for p in m["kmutt_players"]))
+        iso = m["datetime"]["iso"][:10]
+        th = m["datetime"]["th"].rsplit(" ", 1)[0] if " " in m["datetime"]["th"] else m["datetime"]["th"]
+        if key not in dated_day or iso < dated_day[key][0]:
+            dated_day[key] = (iso, th)
+for m in out["matches"]:
+    if m["result"] == "บาย" and not m["datetime"]["iso"]:
+        key = (m["event"], frozenset(p["name"] for p in m["kmutt_players"]))
+        if key in dated_day:
+            m["datetime"]["iso"] = dated_day[key][0]   # วันที่อย่างเดียว (ไม่มีเวลา)
+            m["datetime"]["th"] = dated_day[key][1]
+            m["bye_day_inferred"] = True
+
+# เรียงตาม วัน -> เวลา (บายไม่มีเวลา = ไปท้ายของวันนั้น)
+def _skey(r):
+    iso = r["datetime"]["iso"]
+    date = iso[:10] if len(iso) >= 10 else "9999-99-99"
+    time = iso[11:16] if len(iso) >= 16 else "99:99"
+    return (date, time, r["event"], r["round"])
+out["matches"].sort(key=_skey)
 
 with open("kmutt_data.json", "w", encoding="utf-8") as f:
     json.dump(out, f, ensure_ascii=False, indent=2)
