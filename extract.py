@@ -153,6 +153,9 @@ def conv_date(s):
     m = re.search(r'(\d{1,2})/(\d{1,2})/(\d{4})\s*(\d{1,2}:\d{2})?', s)
     if not m: return {"th": s, "iso": ""}
     d, mo, y, t = m.group(1), m.group(2), int(m.group(3)), m.group(4) or ""
+    if t:  # เติม 0 หน้าชั่วโมง เช่น 9:30 -> 09:30 เพื่อให้เรียงเวลาถูก
+        hh, mm = t.split(":")
+        t = f"{int(hh):02d}:{mm}"
     ce = y - 543
     iso = f"{ce:04d}-{int(mo):02d}-{int(d):02d}" + (f" {t}" if t else "")
     return {"th": s.strip(), "iso": iso}

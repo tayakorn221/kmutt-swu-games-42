@@ -275,6 +275,15 @@ function dayInfo(iso){
   return{key:d,label:"วัน"+THDAY[wd],num:da+" "+TM[mo-1],be:y+543};
 }
 
+/* ---------- sort key (วันที่ + เวลา, เติม 0 หน้าชั่วโมงให้เรียงถูก) ---------- */
+function sortKey(m){
+  const dm=(m.iso||"").match(/(\d{4})-(\d\d)-(\d\d)/);
+  const date=dm?dm[1]+"-"+dm[2]+"-"+dm[3]:"9999-99-99";
+  const tm=((m.iso||"")+" "+(m.th||"")).match(/(\d{1,2}):(\d{2})/);
+  const time=tm?String(tm[1]).padStart(2,"0")+":"+tm[2]:"99:99";
+  return date+" "+time;
+}
+
 /* ---------- render ---------- */
 function compute(){
   const c={total:DATA.length,win:0,lose:0,bye:0,wait:0};
@@ -338,7 +347,7 @@ function render(){
     if(q){const hay=(m.kmutt.join(" ")+" "+m.opp.map(o=>o.name+" "+o.uni).join(" ")+" "+m.event).toLowerCase();
       if(!hay.includes(q))return false}
     return true;});
-  ms.sort((a,b)=>(a.iso||"z").localeCompare(b.iso||"z"));
+  ms.sort((a,b)=>sortKey(a).localeCompare(sortKey(b)));
   if(!ms.length){el("list").innerHTML=
     `<div class="empty"><div class="big">ไม่พบแมตช์ที่ตรงกับเงื่อนไข</div><div>ลองล้างคำค้นหรือเปลี่ยนตัวกรอง</div></div>`;return}
   const groups={};
