@@ -67,6 +67,18 @@ header{padding:clamp(20px,5vw,38px) 0 14px}
   box-shadow:0 0 0 4px rgba(237,106,28,.13)}
 .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);
   width:17px;height:17px;color:var(--ink-soft)}
+/* แท็บเลือกวัน (ตัวกรองหลัก) */
+.daytabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:10px}
+.daytabs::-webkit-scrollbar{display:none}
+.dtab{flex:0 0 auto;border:1.5px solid var(--line);background:var(--card);border-radius:13px;
+  padding:7px 14px;cursor:pointer;white-space:nowrap;font-family:'Bai Jamjuree';
+  transition:all .16s;text-align:center;line-height:1.2;color:var(--ink)}
+.dtab:hover{border-color:var(--orange)}
+.dtab.on{background:var(--orange);border-color:var(--orange);color:#fff;
+  box-shadow:0 3px 11px -2px rgba(237,106,28,.45)}
+.dtab .d1{font-weight:700;font-size:14px;display:block}
+.dtab .d2{font-size:11px;color:var(--ink-soft);font-weight:500}
+.dtab.on .d2{color:rgba(255,255,255,.88)}
 .chips{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:0 0 auto;border:1.5px solid var(--line);background:var(--card);
@@ -191,6 +203,7 @@ footer{margin:40px 0 30px;padding-top:20px;border-top:1px solid var(--line);
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
       <input id="q" type="search" placeholder="ค้นหานักกีฬา / คู่แข่ง / มหาวิทยาลัย…" autocomplete="off">
     </div>
+    <div class="daytabs" id="daytabs"></div>
     <div class="chips" id="chips"></div>
   </div>
 
@@ -272,12 +285,13 @@ function rlabel(c){return{win:"ชนะ",lose:"แพ้",bye:"บาย",wait:
 
 /* ---------- day grouping ---------- */
 const THDAY={"0":"อาทิตย์","1":"จันทร์","2":"อังคาร","3":"พุธ","4":"พฤหัสบดี","5":"ศุกร์","6":"เสาร์"};
+const THDAYSHORT={"0":"อา","1":"จ","2":"อ","3":"พ","4":"พฤ","5":"ศ","6":"ส"};
 function dayInfo(iso){
-  const d=iso.slice(0,10); if(!/^\d{4}-\d\d-\d\d/.test(d))return{key:"zzz",label:"ยังไม่กำหนด",num:""};
+  const d=(iso||"").slice(0,10); if(!/^\d{4}-\d\d-\d\d/.test(d))return{key:"zzz",label:"ยังไม่กำหนด",num:"",short:""};
   const [y,mo,da]=d.split("-").map(Number);
   const wd=new Date(Date.UTC(y,mo-1,da)).getUTCDay();
   const TM=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
-  return{key:d,label:"วัน"+THDAY[wd],num:da+" "+TM[mo-1],be:y+543};
+  return{key:d,label:"วัน"+THDAY[wd],num:da+" "+TM[mo-1],short:THDAYSHORT[wd],be:y+543};
 }
 
 /* ---------- sort key (วันที่ + เวลา, เติม 0 หน้าชั่วโมงให้เรียงถูก) ---------- */
@@ -290,19 +304,40 @@ function sortKey(m){
 }
 
 /* ---------- render ---------- */
-function compute(){
-  const c={total:DATA.length,win:0,lose:0,bye:0,wait:0};
-  DATA.forEach(m=>c[rclass(m.result)]++);return c;
+function compute(list){
+  list=list||DATA;
+  const c={total:list.length,win:0,lose:0,bye:0,wait:0};
+  list.forEach(m=>c[rclass(m.result)]++);return c;
+}
+function dayScoped(){ // ข้อมูลเฉพาะวันที่เลือก (ใช้กับชิปผล)
+  return DAYKEY==="all"?DATA:DATA.filter(m=>dayInfo(m.iso).key===DAYKEY);
 }
 function renderBoard(){
-  const c=compute();
+  const c=compute();   // สกอร์บอร์ด = ภาพรวมทั้งทัวร์นาเมนต์เสมอ
   el("board").innerHTML=[
     ["",c.total,"แมตช์"],["c-win",c.win,"ชนะ"],["c-lose",c.lose,"แพ้"],
     ["c-bye",c.bye,"บาย"],["c-wait",c.wait,"รอแข่ง"]
   ].map(([cl,n,l])=>`<div class="cell ${cl}"><div class="num">${n}</div><div class="lab">${l}</div></div>`).join("");
 }
+function renderDayTabs(){
+  const groups={};
+  DATA.forEach(m=>{const di=dayInfo(m.iso);(groups[di.key]=groups[di.key]||{di,n:0}).n++;});
+  const keys=Object.keys(groups).sort();
+  let html=`<button class="dtab ${DAYKEY=='all'?'on':''}" data-d="all"><span class="d1">ทั้งหมด</span><span class="d2">${DATA.length} แมตช์</span></button>`;
+  keys.forEach(k=>{
+    const{di,n}=groups[k];
+    const d1=k==='zzz'?'บาย':`${di.short} ${di.num}`;
+    const d2=k==='zzz'?`${n} คู่`:`${n} แมตช์`;
+    html+=`<button class="dtab ${DAYKEY==k?'on':''}" data-d="${k}"><span class="d1">${d1}</span><span class="d2">${d2}</span></button>`;
+  });
+  el("daytabs").innerHTML=html;
+  el("daytabs").querySelectorAll(".dtab").forEach(b=>b.onclick=()=>{
+    DAYKEY=b.dataset.d;render();
+    if(DAYKEY!=='all')document.querySelector('.controls').scrollIntoView({block:'start'});
+  });
+}
 function renderChips(){
-  const c=compute();
+  const c=compute(dayScoped());   // ชิปผล = นับเฉพาะวันที่เลือก
   const opts=[["all","ทั้งหมด",c.total],["wait","รอแข่ง",c.wait],
     ["win","ชนะ",c.win],["lose","แพ้",c.lose],["bye","บาย",c.bye]];
   el("chips").innerHTML=opts.map(([k,l,n])=>
@@ -353,9 +388,10 @@ if(window.ResizeObserver){const ro=new ResizeObserver(setCtrlH);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(setCtrlH);
 
 function render(){
-  renderBoard();renderChips();
+  renderBoard();renderDayTabs();renderChips();
   const q=el("q").value.trim().toLowerCase();
   let ms=DATA.filter(m=>{
+    if(DAYKEY!=="all"&&dayInfo(m.iso).key!==DAYKEY)return false;
     if(FILTER!=="all"&&rclass(m.result)!==FILTER)return false;
     if(q){const hay=(m.kmutt.join(" ")+" "+m.opp.map(o=>o.name+" "+o.uni).join(" ")+" "+m.event).toLowerCase();
       if(!hay.includes(q))return false}
