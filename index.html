@@ -322,13 +322,12 @@ function renderBoard(){
 function renderDayTabs(){
   const groups={};
   DATA.forEach(m=>{const di=dayInfo(m.iso);(groups[di.key]=groups[di.key]||{di,n:0}).n++;});
-  const keys=Object.keys(groups).sort();
+  // ไม่สร้างแท็บ "บาย" แยก — บายไปแสดงรวมในแท็บ "ทั้งหมด" (ตอนท้าย)
+  const keys=Object.keys(groups).sort().filter(k=>k!=='zzz');
   let html=`<button class="dtab ${DAYKEY=='all'?'on':''}" data-d="all"><span class="d1">ทั้งหมด</span><span class="d2">${DATA.length} แมตช์</span></button>`;
   keys.forEach(k=>{
     const{di,n}=groups[k];
-    const d1=k==='zzz'?'บาย':`${di.short} ${di.num}`;
-    const d2=k==='zzz'?`${n} คู่`:`${n} แมตช์`;
-    html+=`<button class="dtab ${DAYKEY==k?'on':''}" data-d="${k}"><span class="d1">${d1}</span><span class="d2">${d2}</span></button>`;
+    html+=`<button class="dtab ${DAYKEY==k?'on':''}" data-d="${k}"><span class="d1">${di.short} ${di.num}</span><span class="d2">${n} แมตช์</span></button>`;
   });
   el("daytabs").innerHTML=html;
   el("daytabs").querySelectorAll(".dtab").forEach(b=>b.onclick=()=>{
