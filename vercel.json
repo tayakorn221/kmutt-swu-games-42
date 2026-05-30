@@ -1,4 +1,13 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "regions": ["sin1"]
+  "regions": ["sin1"],
+  "builds": [
+    { "src": "api/matches.py", "use": "@vercel/python", "config": { "includeFiles": "scraper.py" } },
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "data.js", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/matches", "dest": "/api/matches.py" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
 }
