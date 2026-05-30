@@ -166,6 +166,7 @@
           "id": "154"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "ทินกร ปงธิยา",
@@ -200,6 +201,7 @@
           "id": "152"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "ทินกร ปงธิยา",
@@ -234,6 +236,7 @@
           "id": "155"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "นพดล พิตพีรฆ",
@@ -268,6 +271,7 @@
           "id": "21"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "กฤติเตมีย์ อ้อนอุบล",
@@ -302,6 +306,7 @@
           "id": "23"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "อาชวิน เฉลิมชัย",
@@ -336,6 +341,7 @@
           "id": "259"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "ฐานวัฒน์ พร้อมมูล",
@@ -370,6 +376,7 @@
           "id": "261"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "มานะ ภักดีวงศ์",
@@ -404,6 +411,7 @@
           "id": "551"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "ภรัณวัฒน์ ทวีอิสราเมศร์",
@@ -438,6 +446,7 @@
           "id": "373"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "NINETTE MATAAC",
@@ -472,6 +481,7 @@
           "id": "24"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "ดร.วันฉัตร ศิริสาร",
@@ -506,6 +516,7 @@
           "id": "262"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "ณัฐพล สิทธิผล",
@@ -540,6 +551,7 @@
           "id": "372"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "ผศ.ดร.ทศพล รัตน์นิยมชัย",
@@ -574,6 +586,7 @@
           "id": "462"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "ชัยรัตน์ กาญจนพิบูลย์",
@@ -608,6 +621,7 @@
           "id": "638"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "นิภัทร์ สิงห์สวัสดิ์",
@@ -642,6 +656,7 @@
           "id": "371"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "พิทักษ์ นวลจันทร์ [1]",
@@ -676,14 +691,15 @@
           "id": "461"
         }
       ],
+      "tbd": true,
       "opponents": [
         {
-          "name": "Bye",
+          "name": "รอคู่แข่ง",
           "uni": "",
           "id": ""
         }
       ],
-      "result": "บาย",
+      "result": "",
       "score": ""
     },
     {
@@ -705,14 +721,15 @@
           "id": "373"
         }
       ],
+      "tbd": true,
       "opponents": [
         {
-          "name": "Bye",
+          "name": "รอคู่แข่ง",
           "uni": "",
           "id": ""
         }
       ],
-      "result": "บาย",
+      "result": "",
       "score": ""
     },
     {
@@ -734,6 +751,7 @@
           "id": "461"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "นพนนท์ หาแก้ว",
@@ -768,6 +786,7 @@
           "id": "872"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "ขวัญชนก เฉลิมศรี",
@@ -802,6 +821,7 @@
           "id": "155"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "ภัทรพร คุนาพงษ์กิติ",
@@ -836,6 +856,7 @@
           "id": "371"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "ฐิตารีย์ ทำทอง",
@@ -870,6 +891,7 @@
           "id": "872"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "อาจารย์กุสุมา รวมธรรม",
@@ -904,6 +926,7 @@
           "id": "638"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "Bye",
@@ -933,6 +956,7 @@
           "id": "262"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "Bye",
@@ -962,6 +986,7 @@
           "id": "24"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "Bye",
@@ -991,6 +1016,7 @@
           "id": "551"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "Bye",
@@ -1020,6 +1046,7 @@
           "id": "371"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "Bye",
@@ -1049,6 +1076,7 @@
           "id": "872"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "Bye",
@@ -1078,6 +1106,7 @@
           "id": "155"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "Bye",
@@ -1107,6 +1136,7 @@
           "id": "261"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "Bye",
@@ -1136,6 +1166,7 @@
           "id": "259"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "Bye",
@@ -1165,6 +1196,7 @@
           "id": "373"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "Bye",
@@ -1194,6 +1226,7 @@
           "id": "371"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "Bye",
@@ -1223,6 +1256,7 @@
           "id": "461"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "Bye",
@@ -1252,6 +1286,7 @@
           "id": "21"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "Bye",
@@ -1281,6 +1316,7 @@
           "id": "23"
         }
       ],
+      "tbd": false,
       "opponents": [
         {
           "name": "Bye",

@@ -53,7 +53,7 @@ for m in d["matches"]:
         "court": m["court"],
         "kmutt": [p["name"] for p in m["kmutt_players"]],
         "opp": [{"name": o["name"], "uni": o["uni"]} for o in m["opponents"]],
-        "result": m["result"], "score": m["score"],
+        "result": m["result"], "score": m["score"], "tbd": m.get("tbd", False),
     })
 with open("data.js", "w", encoding="utf-8") as f:
     f.write("window.KMUTT_FALLBACK = ")

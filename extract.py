@@ -103,9 +103,10 @@ def parse_player_page(my_pid, data):
                 pls.append({"id": pid, "club": cid, "name": nm})
                 if cid:
                     club_of[pid] = cid
-            is_bye = bool(re.search(r'nav-link__value">\s*Bye\s*</span>', r))
-            if pls or is_bye:
-                sides.append({"players": pls, "won": won, "status": status, "bye": (not pls)})
+            is_bye_text = bool(re.search(r'nav-link__value">\s*Bye\s*</span>', r))
+            # เก็บทุกแถวจริง รวมแถวคู่แข่งที่ "ว่าง" (= รอคู่แข่งจากรอบก่อน)
+            sides.append({"players": pls, "won": won, "status": status,
+                          "bye": is_bye_text, "empty": (not pls and not is_bye_text)})
         # footer: datetime, court, match id
         dt = ""; court = ""; mid = ""
         cm = re.search(r'matchcalendarhandler\.ashx\?code=[^&]+&(?:amp;)?id=(\d+)', it)
@@ -183,22 +184,25 @@ for k, mt in matches.items():
     if opp_side is None and len(sides) == 2:
         opp_side = sides[0] if sides[1] is kmutt_side else sides[1]
     rec["kmutt_players"] = [{"name": p["name"], "id": p["id"]} for p in kmutt_side["players"]]
+    rec["tbd"] = False
     if opp_side and opp_side.get("players"):
+        # มีคู่แข่งแล้ว
         rec["opponents"] = [{"name": p["name"], "uni": uni_of(p), "id": p["id"]} for p in opp_side["players"]]
-    elif opp_side is not None and opp_side.get("bye"):
+        if kmutt_side["won"]:
+            rec["result"] = "ชนะ"
+        elif opp_side.get("won"):
+            rec["result"] = "แพ้"
+        else:
+            rec["result"] = ""           # ยังไม่แข่ง
+    elif opp_side and opp_side.get("bye"):
+        # บายจริง (เขียน "Bye" ชัดเจน = ผ่านเข้ารอบโดยไม่ต้องแข่ง)
         rec["opponents"] = [{"name": "Bye", "uni": "", "id": ""}]
+        rec["result"] = "บาย"
     else:
-        rec["opponents"] = [{"name": "Bye", "uni": "", "id": ""}]
-    # ผล
-    is_bye = bool(opp_side and opp_side.get("bye")) or (rec["opponents"] and rec["opponents"][0]["name"] == "Bye")
-    if is_bye:
-        rec["result"] = "บาย"        # ผ่านเข้ารอบโดยไม่ต้องแข่ง
-    elif kmutt_side["won"]:
-        rec["result"] = "ชนะ"
-    elif opp_side and opp_side.get("won"):
-        rec["result"] = "แพ้"
-    else:
-        rec["result"] = ""           # ยังไม่แข่ง
+        # ช่องคู่แข่งว่าง = รอคู่แข่งจากผลรอบก่อนหน้า (เป็นแมตช์จริงที่ตั้งโปรแกรมแล้ว)
+        rec["opponents"] = [{"name": "รอคู่แข่ง", "uni": "", "id": ""}]
+        rec["tbd"] = True
+        rec["result"] = ""               # ยังไม่แข่ง
     rec["score"] = ""  # สกอร์ยังไม่เผยแพร่ — กรอกเองได้
     out["matches"].append(rec)
 

@@ -24,7 +24,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "3610",
@@ -48,7 +49,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "3598",
@@ -72,7 +74,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "2960",
@@ -96,7 +99,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "2982",
@@ -120,7 +124,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "5728",
@@ -144,7 +149,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "5743",
@@ -168,7 +174,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "5341",
@@ -192,7 +199,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "3986",
@@ -216,7 +224,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "5361",
@@ -240,7 +249,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "3745",
@@ -264,7 +274,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "4358",
@@ -288,7 +299,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "4385",
@@ -312,7 +324,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "3237",
@@ -336,7 +349,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "6023",
@@ -360,7 +374,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "4823",
@@ -375,12 +390,13 @@ window.KMUTT_FALLBACK = {
    ],
    "opp": [
     {
-     "name": "Bye",
+     "name": "รอคู่แข่ง",
      "uni": ""
     }
    ],
-   "result": "บาย",
-   "score": ""
+   "result": "",
+   "score": "",
+   "tbd": true
   },
   {
    "id": "6036",
@@ -395,12 +411,13 @@ window.KMUTT_FALLBACK = {
    ],
    "opp": [
     {
-     "name": "Bye",
+     "name": "รอคู่แข่ง",
      "uni": ""
     }
    ],
-   "result": "บาย",
-   "score": ""
+   "result": "",
+   "score": "",
+   "tbd": true
   },
   {
    "id": "5966",
@@ -424,7 +441,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "5974",
@@ -448,7 +466,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "3973",
@@ -472,7 +491,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "5588",
@@ -496,7 +516,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "5583",
@@ -520,7 +541,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "",
@@ -540,7 +562,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "บาย",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "",
@@ -560,7 +583,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "บาย",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "",
@@ -580,7 +604,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "บาย",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "",
@@ -600,7 +625,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "บาย",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "",
@@ -620,7 +646,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "บาย",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "",
@@ -640,7 +667,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "บาย",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "",
@@ -660,7 +688,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "บาย",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "",
@@ -680,7 +709,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "บาย",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "",
@@ -700,7 +730,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "บาย",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "",
@@ -720,7 +751,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "บาย",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "",
@@ -740,7 +772,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "บาย",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "",
@@ -760,7 +793,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "บาย",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "",
@@ -780,7 +814,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "บาย",
-   "score": ""
+   "score": "",
+   "tbd": false
   },
   {
    "id": "",
@@ -800,7 +835,8 @@ window.KMUTT_FALLBACK = {
     }
    ],
    "result": "บาย",
-   "score": ""
+   "score": "",
+   "tbd": false
   }
  ]
 };

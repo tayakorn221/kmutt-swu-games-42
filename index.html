@@ -353,10 +353,18 @@ function sideHTML(names,uni,isK){
 function esc(s){return (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
 function matchHTML(m){
   const cls=rclass(m.result);
-  const oppNames=m.opp.map(o=>o.name).filter(n=>n&&n!=="Bye");
+  const isTbd=m.tbd||m.opp.some(o=>o.name==="รอคู่แข่ง");
+  const oppNames=m.opp.map(o=>o.name).filter(n=>n&&n!=="Bye"&&n!=="รอคู่แข่ง");
   const oppUni=[...new Set(m.opp.map(o=>o.uni).filter(Boolean))].join(", ");
-  const isBye=cls==="bye"||!oppNames.length;
+  const isBye=(m.result==="บาย")||(!isTbd&&!oppNames.length);
   const time=(m.th.match(/\d{1,2}:\d{2}/)||[""])[0];
+  let oppBlock,divider;
+  if(isBye){divider='บาย';
+    oppBlock='<div class="side"><div class="who"><div class="nm" style="color:var(--bye)">ผ่านเข้ารอบ (ไม่ต้องแข่ง)</div></div></div>';}
+  else if(isTbd){divider='พบ';
+    oppBlock='<div class="side"><div class="who"><div class="nm" style="color:var(--wait)">รอคู่แข่ง</div><div class="uni">รอผลการแข่งรอบก่อนหน้า</div></div></div>';}
+  else{divider='พบ';oppBlock=sideHTML(oppNames,oppUni,false);}
+  const badge=isTbd?'<span class="res wait">⏳ รอคู่แข่ง</span>':`<span class="res ${cls}">${rlabel(cls)}</span>`;
   return `<div class="match r-${cls}">
     <div class="m-top">
       <span class="ev">${esc(m.event)}</span>
@@ -364,11 +372,10 @@ function matchHTML(m){
       <span class="m-when">${time?`<span class="t">${time} น.</span>`:'<span>ยังไม่กำหนดเวลา</span>'}</span>
     </div>
     ${sideHTML(m.kmutt,"",true)}
-    <div class="vs"><span class="ln"></span><span>${isBye?'บาย':'พบ'}</span><span class="ln"></span></div>
-    ${isBye?'<div class="side"><div class="who"><div class="nm" style="color:var(--bye)">ผ่านเข้ารอบ (ไม่ต้องแข่ง)</div></div></div>'
-      :sideHTML(oppNames,oppUni,false)}
+    <div class="vs"><span class="ln"></span><span>${divider}</span><span class="ln"></span></div>
+    ${oppBlock}
     <div class="m-foot">
-      <span class="res ${cls}">${rlabel(cls)}</span>
+      ${badge}
       ${m.score?`<span class="score">${esc(m.score)}</span>`:''}
       ${m.court?`<span class="court">📍 ${esc(m.court)}</span>`:''}
     </div></div>`;
