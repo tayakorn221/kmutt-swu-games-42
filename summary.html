@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>การ์ดสรุปแมตช์ มจธ. · มศว เกมส์ 42</title>
+<!-- ฟอนต์ฝัง base64 ทั้ง thai+latin (จอ=รูป, ออฟไลน์ได้) · ข้อมูล fallback · html-to-image -->
+<script src="summary-fonts.js"></script>
+<script src="data.js"></script>
+<script src="html-to-image.js"></script>
+<style>
+:root{
+  --card-w:1080px; --card-h:1350px;
+  --orange:#FF6A1A; --orange-deep:#C9520F;
+  --ink:#0E1217; --ink2:#161C25; --surface:#1C2430; --surface2:#222C3A;
+  --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.16);
+  --text:#F4F7FB; --muted:#9AA7B8; --faint:#6B7888;
+  --win:#34D17F; --win-deep:#15A75E; --lose:#FF5B52; --wait:#E0A33C; --bye:#6E8DB5;
+  --rs:1; /* row-scale ที่ auto-fit ปรับให้พอดีการ์ด */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'IBM Plex Sans Thai',sans-serif;background:#0A0D12;color:var(--text);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  padding:18px 14px 60px;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+
+/* ---------- toolbar (ไม่ถูก capture) ---------- */
+.toolbar{width:100%;max-width:560px;display:flex;flex-wrap:wrap;gap:10px;
+  align-items:center;justify-content:center;margin-bottom:18px}
+.tool{display:flex;align-items:center;gap:6px;background:#161C25;border:1px solid var(--line2);
+  border-radius:12px;padding:6px;color:var(--text)}
+.tool button,.tool input,.tool select{font:inherit;color:var(--text);background:transparent;
+  border:0;cursor:pointer;border-radius:8px;padding:8px 12px}
+.tool button:hover{background:#222C3A}
+.seg{display:flex;background:#161C25;border:1px solid var(--line2);border-radius:12px;padding:4px}
+.seg button{padding:8px 18px;border-radius:9px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--orange);color:#1A0E06}
+.dl{background:linear-gradient(180deg,#FF7A2E,#E85B12);color:#fff;font-weight:700;
+  border:0;border-radius:12px;padding:12px 22px;cursor:pointer;box-shadow:0 6px 18px -6px rgba(255,106,26,.6)}
+.dl:disabled{opacity:.5;cursor:wait}
+.hint{width:100%;max-width:560px;text-align:center;color:var(--faint);font-size:13px;margin:-6px 0 16px}
+.hint code{color:var(--muted);background:#161C25;padding:1px 7px;border-radius:6px}
+
+/* ---------- stage (ย่อให้พอดีจอ ด้วย transform; wrapper กันล้นแนวนอน) ---------- */
+.stagewrap{margin:0 auto;overflow:hidden}
+.stage{transform-origin:top left}
+
+/* ===========================================================
+   CARD — 1080x1350 คงที่ (single source of truth ทั้ง 2 โหมด)
+   =========================================================== */
+#card{
+  width:var(--card-w);height:var(--card-h);position:relative;overflow:hidden;
+  background:
+    radial-gradient(120% 80% at 88% -8%,rgba(255,106,26,.20),transparent 55%),
+    radial-gradient(90% 60% at -10% 108%,rgba(52,209,127,.10),transparent 55%),
+    linear-gradient(168deg,#10151D 0%,#0B0F15 60%,#0E141C 100%);
+  color:var(--text);font-family:'IBM Plex Sans Thai',sans-serif;
+  display:flex;flex-direction:column;
+  padding:64px 60px 0;
+}
+#card::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,transparent 78%,rgba(0,0,0,.35));}
+#card::after{content:"";position:absolute;left:0;right:0;top:0;height:8px;
+  background:linear-gradient(90deg,var(--orange),#FFB36B 60%,var(--orange-deep));}
+
+/* ---- header ---- */
+.hd{position:relative;z-index:2;flex:0 0 auto;padding-bottom:26px;
+  border-bottom:1px solid var(--line);margin-bottom:24px}
+.hd-top{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.hd-team{font-family:'IBM Plex Sans Thai';font-weight:700;font-size:30px;
+  letter-spacing:.5px;color:#fff;background:linear-gradient(180deg,#FF7A2E,#E85B12);
+  padding:8px 20px;border-radius:14px;line-height:1;box-shadow:0 8px 22px -10px rgba(255,106,26,.8)}
+.hd-tour{font-size:21px;color:var(--muted);font-weight:500;line-height:1.25}
+.hd-tour b{color:var(--text);font-weight:600}
+.hd-mode{margin-left:auto;font-weight:700;font-size:18px;letter-spacing:1px;
+  padding:9px 18px;border-radius:999px;border:1.5px solid var(--line2);color:var(--muted);text-transform:uppercase}
+.hd-mode.results{color:var(--win);border-color:rgba(52,209,127,.5);background:rgba(52,209,127,.10)}
+.hd-mode.preview{color:var(--orange);border-color:rgba(255,106,26,.5);background:rgba(255,106,26,.10)}
+.hd-title{font-family:'IBM Plex Sans Thai';font-weight:700;
+  font-size:66px;line-height:1.02;letter-spacing:-.5px;color:#fff;margin-bottom:8px}
+.hd-title .accent{color:var(--orange)}
+.hd-date{font-size:30px;color:var(--text);font-weight:600}
+.hd-date .wd{color:var(--orange)}
+.hd-sub{font-size:20px;color:var(--faint);margin-top:4px}
+
+/* ---- body / rows (multi-column: 1 คอลัมน์วันเบา, 2 คอลัมน์วันหนาแน่น) ---- */
+.body{position:relative;z-index:2;flex:1 1 auto;min-height:0;overflow:hidden}
+.rows{column-count:var(--cols,1);column-gap:calc(16px*var(--rs));column-fill:balance}
+.row{
+  break-inside:avoid;-webkit-column-break-inside:avoid;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;gap:calc(8px*var(--rs));
+  background:linear-gradient(180deg,rgba(34,44,58,.72),rgba(26,34,46,.72));
+  border:1px solid var(--line);border-radius:calc(16px*var(--rs));
+  padding:calc(13px*var(--rs)) calc(18px*var(--rs)) calc(13px*var(--rs)) calc(22px*var(--rs));
+  margin-bottom:calc(12px*var(--rs));
+}
+.row:last-child{margin-bottom:0}
+.row.kmuttwin{border-color:rgba(52,209,127,.5);
+  background:linear-gradient(180deg,rgba(30,56,44,.82),rgba(22,40,32,.82))}
+.row.kmuttlose{opacity:.92}
+.row.bye{border-style:dashed;border-color:var(--line2)}
+.row::before{content:"";position:absolute;left:0;top:12%;bottom:12%;width:5px;border-radius:0 4px 4px 0;
+  background:var(--orange)}
+.row.kmuttwin::before{background:var(--win)}
+.row.bye::before{background:var(--bye)}
+
+/* head: เวลา | badge ประเภท */
+.r-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.r-time{font-family:'IBM Plex Sans Thai';font-weight:700;
+  font-size:calc(30px*var(--rs));line-height:1;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
+.r-time small{font-size:calc(15px*var(--rs));color:var(--muted);font-weight:500}
+.r-time .bye-lab{font-size:calc(18px*var(--rs));color:var(--bye);font-weight:600}
+.ev{font-family:'IBM Plex Sans Thai';font-weight:700;font-size:calc(18px*var(--rs));
+  color:#fff;background:rgba(255,255,255,.10);border:1px solid var(--line2);
+  padding:calc(5px*var(--rs)) calc(11px*var(--rs));border-radius:calc(9px*var(--rs));white-space:nowrap}
+
+/* body: ผู้เล่น ม.ซ้าย | VS/score | ผู้เล่น ม.ขวา */
+.r-body{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:calc(10px*var(--rs))}
+.side{display:flex;flex-direction:column;gap:calc(6px*var(--rs));min-width:0}
+.side.k{align-items:flex-end;text-align:right}
+.side.o{align-items:flex-start;text-align:left}
+.nm{font-size:calc(22px*var(--rs));font-weight:600;line-height:1.14;color:var(--text);word-break:break-word}
+.side.dim .nm{color:var(--muted);font-weight:500}
+.side.win .nm{color:#fff;font-weight:700}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:calc(14px*var(--rs));
+  font-weight:700;line-height:1;color:#fff;padding:calc(4px*var(--rs)) calc(11px*var(--rs));
+  border-radius:999px;letter-spacing:.2px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip.k{background:linear-gradient(180deg,#FF7A2E,#E85B12);
+  box-shadow:0 4px 12px -5px rgba(255,106,26,.7);border:1px solid rgba(255,180,120,.5)}
+.chip .ck{font-size:calc(13px*var(--rs))}
+.win-tick{color:var(--win);font-weight:800}
+
+/* center: VS / score / pill */
+.c-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(3px*var(--rs))}
+.vs{font-family:'IBM Plex Sans Thai';font-weight:700;font-size:calc(20px*var(--rs));
+  color:var(--faint);letter-spacing:1px}
+.score{font-family:'IBM Plex Sans Thai';font-weight:700;font-size:calc(24px*var(--rs));
+  color:#fff;line-height:1.05;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{font-size:calc(14px*var(--rs));font-weight:700;padding:calc(5px*var(--rs)) calc(12px*var(--rs));
+  border-radius:999px;line-height:1;white-space:nowrap}
+.pill.wait{color:var(--wait);background:rgba(224,163,60,.14);border:1px solid rgba(224,163,60,.4)}
+.pill.bye{color:var(--bye);background:rgba(110,141,181,.16);border:1px solid rgba(110,141,181,.45)}
+.pill.win{color:#06140C;background:var(--win)}
+.pill.lose{color:#fff;background:var(--lose)}
+
+/* foot: คอร์ต · รอบ */
+.r-foot{display:flex;align-items:center;gap:10px;font-size:calc(14px*var(--rs));color:var(--faint);line-height:1.1}
+.r-foot .court b{color:var(--muted);font-weight:600}
+.r-foot .sep{opacity:.5}
+
+/* empty */
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:var(--muted);gap:10px;text-align:center}
+.empty .big{font-size:34px;font-weight:700;color:var(--text)}
+
+/* ---- footer ---- */
+.ft{position:relative;z-index:2;flex:0 0 auto;display:flex;align-items:center;
+  justify-content:space-between;padding:22px 0 26px;margin-top:14px;border-top:1px solid var(--line)}
+.ft-l{display:flex;align-items:center;gap:12px}
+.ft-mark{font-family:'IBM Plex Sans Thai';font-weight:700;font-size:26px;color:#fff}
+.ft-mark span{color:var(--orange)}
+.ft-social{font-size:21px;color:var(--muted);font-weight:500}
+.ft-social b{color:var(--text)}
+.ft-tag{font-size:20px;font-weight:700;color:var(--orange);letter-spacing:.3px}
+</style>
+</head>
+<body>
+
+<!-- ===== toolbar (เครื่องมือผู้ดูแล — ไม่อยู่ในรูป export) ===== -->
+<div class="toolbar">
+  <div class="tool">
+    <button id="prev" title="วันก่อนหน้า">◀</button>
+    <input type="date" id="datein">
+    <button id="next" title="วันถัดไป">▶</button>
+  </div>
+  <div class="seg" id="modeseg">
+    <button data-m="preview" class="on">เช้า · พรีวิว</button>
+    <button data-m="results">ค่ำ · ผล</button>
+  </div>
+  <button class="dl" id="dl">⬇ ดาวน์โหลด PNG</button>
+</div>
+<div class="hint">โหมด <b id="hintmode">preview</b> · ขนาด 1080×1350 · URL: <code id="hinturl"></code></div>
+
+<!-- ===== stage + card ===== -->
+<div class="stagewrap" id="stagewrap">
+  <div class="stage" id="stage">
+    <div id="card"><!-- render --></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const TOURNAMENT = "กีฬาบุคลากรมหาวิทยาลัยแห่งประเทศไทย ครั้งที่ 42 มศว เกมส์";
+const KMUTT_NAME = "มจธ.";
+const SOCIAL_HANDLE = "KMUTT Badminton";
+const HASHTAG = "#มจธ #มศวเกมส์42";
+const EXPORT_SCALE = 1;           // 1 = ได้ไฟล์ 1080x1350 พอดี (เพิ่มเป็น 2 ถ้าต้องการ retina)
+
+/* ตัวย่อ + สีประจำสถาบัน — สร้างจากค่า uni จริงในข้อมูล (ดู task_0)
+   ฝั่ง มจธ. ไม่มี field uni (ข้อมูล pre-filter แล้ว) จึงใช้ chip "มจธ." คงที่ */
+const UNIVERSITY_ABBR_MAP = {
+  "มจธ.":                              {color:"#FF6A1A"},
+  "ม.เชียงใหม่":                        {color:"#6A3FA0"},
+  "ม.เกษตรศาสตร์":                      {color:"#1F7A4D"},
+  "ม.สุโขทัยธรรมาธิราช":                 {color:"#0E8C84", short:"มสธ."},
+  "ม.ธรรมศาสตร์":                       {color:"#C8322B"},
+  "ม.มหามกุฏราชวิทยาลัย":               {color:"#9A6B12", short:"มมร."},
+  "มทร.อีสาน":                          {color:"#7B1E2B"},
+  "อว.":                               {color:"#3A5A8C"},
+  "มรภ.บ้านสมเด็จเจ้าพระยา":             {color:"#2563A8", short:"มรภ.บ้านสมเด็จฯ"},
+  "ม.เทคโนโลยีสุรนารี":                  {color:"#8A5A1E", short:"มทส."},
+  "มรภ.พระนคร":                         {color:"#2F7FA0"},
+  "ม.มหาจุฬาลงกรณราชวิทยาลัย":           {color:"#C07A12", short:"มจร."},
+  "ม.มหิดล":                            {color:"#16386B"},
+  "มทร.ล้านนา":                         {color:"#6B2737"},
+  "มรภ.ราชนครินทร์":                     {color:"#3C6E8F"},
+  "มรภ.วไลยอลงกรณ์ ในพระบรมราชูปถัมภ์":  {color:"#4F7A4A", short:"มรภ.วไลยอลงกรณ์"},
+};
+const FALLBACK_COLORS = ["#3A5A8C","#5B6B3A","#7A3F6A","#3F6E6A","#8C5A2B","#4A4F8C","#6B3A3A","#2F6E54"];
+function uniStyle(uni){
+  const u=(uni||"").trim();
+  if(!u) return null;                       // uni ว่าง = ซ่อน chip
+  if(UNIVERSITY_ABBR_MAP[u]) return {abbr:UNIVERSITY_ABBR_MAP[u].short||u, color:UNIVERSITY_ABBR_MAP[u].color};
+  let h=0; for(const c of u) h=(h*31+c.charCodeAt(0))>>>0;   // สีคงที่ต่อชื่อสำหรับ ม. นอก map
+  return {abbr:u, color:FALLBACK_COLORS[h%FALLBACK_COLORS.length]};
+}
+
+/* ============================================================
+   DATA — โครงสร้างจริง: {id,event,round,th,iso,court,kmutt:[ชื่อ],opp:[{name,uni}],result,score,tbd}
+   ============================================================ */
+let DATA = [];
+function fromFallback(){ return (window.KMUTT_FALLBACK?.matches||[]).map(m=>({...m})); }
+async function loadData(){
+  try{
+    const r=await fetch("/api/matches",{cache:"no-store"});
+    if(r.ok){ const j=await r.json(); if(j&&Array.isArray(j.matches)&&j.matches.length){ return j.matches.map(m=>({...m})); } }
+  }catch(e){}
+  return fromFallback();           // fallback: data.js ฝังในเว็บ (ทำงาน offline ได้)
+}
+
+/* ---------- ตัวจำแนกผล (logic เดียวกับหน้าเว็บหลัก) ---------- */
+function rclass(r){ r=(r||"").trim();
+  if(/ชนะ|^w$|win/i.test(r)) return "win";
+  if(/แพ้|^l$|lose|loss/i.test(r)) return "lose";
+  if(/บาย|bye/i.test(r)) return "bye";
+  return "wait"; }
+function roundTH(r){ return (r||"")
+  .replace("Round of 128","รอบ 128 คู่").replace("Round of 64","รอบ 64 คู่")
+  .replace("Round of 32","รอบ 32 คู่").replace("Round of 16","รอบ 16 คู่")
+  .replace("Quarter-final","รอบ 8 คู่").replace("Quarterfinal","รอบ 8 คู่")
+  .replace("Semi-final","รอบรองฯ").replace("Semifinal","รอบรองฯ")
+  .replace("Final","รอบชิงฯ"); }
+function esc(s){ return (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+
+/* ---------- วันที่ไทย ---------- */
+const THDAY=["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
+const THMON=["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+function dateKey(m){ return (m.iso||"").slice(0,10); }
+function thaiFullDate(d){
+  if(!/^\d{4}-\d\d-\d\d$/.test(d)) return d||"";
+  const [y,mo,da]=d.split("-").map(Number);
+  const wd=new Date(Date.UTC(y,mo-1,da)).getUTCDay();
+  return {wd:"วัน"+THDAY[wd], rest:`ที่ ${da} ${THMON[mo-1]} ${y+543}`};
+}
+function timeOf(m){ return ((m.th||"")+" "+(m.iso||"")).match(/(\d{1,2}):(\d{2})/); }
+function sortKey(m){
+  const t=timeOf(m); const time=t?String(t[1]).padStart(2,"0")+":"+t[2]:"99:99";
+  return time+(m.id||""); }
+
+/* ============================================================
+   RENDER — การ์ดเดียว, โหมดต่างกันแค่ result block
+   ============================================================ */
+function sideHTML(names, sideClass, opts){
+  const nm = names.length ? names.map(esc).join("<br>") : "—";
+  const chip = opts.chip ? `<span class="chip ${opts.kmutt?'k':''}" ${opts.color?`style="background:${opts.color}"`:''}>${opts.kmutt?'<span class="ck">★</span>':''}${esc(opts.chip)}</span>` : "";
+  const tick = opts.win ? '<span class="win-tick">✔</span> ' : '';
+  return `<div class="side ${sideClass} ${opts.win?'win':''} ${opts.dim?'dim':''}">
+    ${chip}<div class="nm">${opts.win?tick:''}${nm}</div></div>`;
+}
+
+function rowHTML(m, mode){
+  const cls = rclass(m.result);
+  const isResults = mode==="results";
+  const t = timeOf(m);
+  const oppNames = m.opp.map(o=>o.name).filter(n=>n && n!=="Bye" && n!=="รอคู่แข่ง");
+  const isTbd = m.tbd || m.opp.some(o=>o.name==="รอคู่แข่ง");
+  const isBye = cls==="bye" || (!isTbd && !oppNames.length);
+  const oppUniRaw = (m.opp.find(o=>o.uni && o.uni.trim())||{}).uni || "";
+  const oppU = uniStyle(oppUniRaw);
+
+  // ฝั่ง มจธ. (ซ้าย) — chip คงที่ "มจธ."
+  const kWin = isResults && cls==="win";
+  const kDim = isResults && cls==="lose";
+  const kmuttSide = sideHTML(m.kmutt, "k", {chip:KMUTT_NAME, kmutt:true, win:kWin, dim:kDim});
+
+  // ฝั่งคู่แข่ง (ขวา)
+  let oppSide;
+  if(isBye){
+    oppSide = `<div class="side o"><div class="nm" style="color:var(--bye)">ผ่านเข้ารอบ</div></div>`;
+  }else if(isTbd){
+    oppSide = `<div class="side o"><div class="nm" style="color:var(--wait)">รอคู่แข่ง</div></div>`;
+  }else{
+    const oWin = isResults && cls==="lose";
+    const oDim = isResults && cls==="win";
+    oppSide = sideHTML(oppNames, "o", {chip:oppU?oppU.abbr:"", color:oppU?oppU.color:"", win:oWin, dim:oDim});
+  }
+
+  // กลาง: VS / score / pill
+  let mid;
+  if(isBye){
+    mid = `<span class="vs" style="color:var(--bye)">→</span>`;
+  }else if(isResults && (cls==="win"||cls==="lose") && m.score){
+    mid = `<span class="score">${esc(m.score)}</span>`;
+  }else if(isResults && (cls==="win"||cls==="lose")){   // มีผลแล้วแต่ยังไม่กรอกสกอร์
+    mid = `<span class="pill ${cls}">${cls==="win"?"ชนะ":"แพ้"}</span>`;
+  }else if(isResults && cls==="wait"){
+    mid = `<span class="pill wait">รอแข่ง</span>`;
+  }else{ // preview (ทุก match) หรือ tbd
+    mid = `<span class="vs">VS</span>`;
+  }
+
+  // head: เวลา (บายไม่มีเวลาแข่ง) | badge ประเภท
+  const timeHTML = isBye
+    ? `<span class="bye-lab">บาย</span>`
+    : (t ? `${t[1]}:${t[2]}<small> น.</small>` : `<small>ยังไม่กำหนดเวลา</small>`);
+
+  // foot: คอร์ต · รอบ (ซ่อน field ที่ว่าง)
+  const footParts = [];
+  if(!isBye && m.court) footParts.push(`<span class="court"><b>คอร์ต</b> ${esc(m.court)}</span>`);
+  if(m.round) footParts.push(`<span class="rnd">${esc(roundTH(m.round))}</span>`);
+  const foot = footParts.length ? `<div class="r-foot">${footParts.join('<span class="sep">·</span>')}</div>` : "";
+
+  const rowCls = kWin ? "kmuttwin" : (kDim ? "kmuttlose" : (isBye ? "bye" : ""));
+  return `<div class="row ${rowCls}">
+    <div class="r-head"><span class="r-time">${timeHTML}</span><span class="ev">${esc(m.event)}</span></div>
+    <div class="r-body">${kmuttSide}<div class="c-mid">${mid}</div>${oppSide}</div>
+    ${foot}
+  </div>`;
+}
+
+function renderCard(date, mode){
+  const matches = DATA.filter(m=>dateKey(m)===date).sort((a,b)=>sortKey(a).localeCompare(sortKey(b)));
+  const df = thaiFullDate(date);
+  const modeLabel = mode==="results" ? "ผลการแข่งขัน" : "โปรแกรมแข่งวันนี้";
+  const titleHTML = mode==="results"
+    ? `<span class="accent">ผล</span>การแข่งขัน`
+    : `แข่ง<span class="accent">วันนี้</span>`;
+
+  const header = `<div class="hd">
+    <div class="hd-top">
+      <span class="hd-team">${esc(KMUTT_NAME)}</span>
+      <span class="hd-tour"><b>มศว เกมส์ 42</b><br>${esc("กีฬาบุคลากรมหาวิทยาลัยฯ ครั้งที่ 42")}</span>
+      <span class="hd-mode ${mode}">${mode}</span>
+    </div>
+    <div class="hd-title">${titleHTML}</div>
+    <div class="hd-date"><span class="wd">${esc(df.wd||"")}</span>${esc(df.rest||date)}</div>
+    <div class="hd-sub">${esc(modeLabel)} · แบดมินตัน · ทีม มจธ.</div>
+  </div>`;
+
+  const cols = matches.length>8 ? 2 : 1;   // วันหนาแน่น (>8 แมตช์) ใช้ 2 คอลัมน์
+  let body;
+  if(!matches.length){
+    body = `<div class="body"><div class="empty"><div class="big">ไม่มีแมตช์ของทีม มจธ. ในวันนี้</div><div>เลือกวันอื่นจากแถบเครื่องมือด้านบน</div></div></div>`;
+  }else{
+    body = `<div class="body"><div class="rows" style="--cols:${cols}">${matches.map(m=>rowHTML(m,mode)).join("")}</div></div>`;
+  }
+
+  const footer = `<div class="ft">
+    <div class="ft-l">
+      <span class="ft-mark">มจธ.<span>·</span>SWU GAMES 42</span>
+      <span class="ft-social">${esc(SOCIAL_HANDLE)}</span>
+    </div>
+    <span class="ft-tag">${esc(HASHTAG)}</span>
+  </div>`;
+
+  document.getElementById("card").innerHTML = header + body + footer;
+  fitRows();
+}
+
+/* auto-fit: ลด --rs ลงจนแถวพอดีการ์ด (รองรับวันที่มี 16 แมตช์) */
+function fitRows(){
+  const card=document.getElementById("card");
+  const body=card.querySelector(".body");
+  const rows=card.querySelector(".rows");
+  if(!rows) return;
+  let rs=1; card.style.setProperty("--rs",rs);
+  for(let i=0;i<16 && rows.scrollHeight>body.clientHeight;i++){
+    rs=Math.max(0.55, rs-0.045); card.style.setProperty("--rs",rs);
+  }
+}
+
+/* ============================================================
+   EXPORT — embed ฟอนต์ไทย base64 ก่อน toPng (กันข้อความเพี้ยน)
+   ============================================================ */
+function ensureFontStyle(){
+  if(document.getElementById("thaiFontEmbed")) return;
+  const s=document.createElement("style"); s.id="thaiFontEmbed";
+  s.textContent=window.THAI_FONT_CSS||""; document.head.appendChild(s);
+}
+async function exportPNG(){
+  const btn=document.getElementById("dl"); btn.disabled=true; const old=btn.textContent; btn.textContent="กำลังสร้างรูป…";
+  try{
+    ensureFontStyle();
+    if(document.fonts&&document.fonts.ready) await document.fonts.ready;
+    fitRows();   // วัด fit ด้วย metric ฟอนต์จริงก่อน export (กันแถวล้น/ตกขอบในรูป)
+    const card=document.getElementById("card");
+    const dataUrl=await htmlToImage.toPng(card,{
+      width:1080, height:1350, pixelRatio:EXPORT_SCALE, cacheBust:true,
+      backgroundColor:"#0A0D12",
+      fontEmbedCSS: window.THAI_FONT_CSS || "",   // ← กุญแจสำคัญ: ไม่ให้ไปดึงฟอนต์ภายนอก
+      style:{margin:"0"}
+    });
+    const a=document.createElement("a");
+    a.download=`summary-${STATE.date}-${STATE.mode}.png`; a.href=dataUrl; a.click();
+  }catch(e){ alert("สร้างรูปไม่สำเร็จ: "+e); console.error(e); }
+  finally{ btn.disabled=false; btn.textContent=old; }
+}
+
+/* ============================================================
+   STATE / URL / TOOLBAR
+   ============================================================ */
+const STATE={date:"",mode:"preview"};
+function availableDates(){ return [...new Set(DATA.map(dateKey))].filter(Boolean).sort(); }
+function syncToolbar(){
+  document.getElementById("datein").value=STATE.date;
+  document.querySelectorAll("#modeseg button").forEach(b=>b.classList.toggle("on",b.dataset.m===STATE.mode));
+  document.getElementById("hintmode").textContent=STATE.mode;
+  document.getElementById("hinturl").textContent=`summary.html?date=${STATE.date}&mode=${STATE.mode}`;
+  const u=new URL(location); u.searchParams.set("date",STATE.date); u.searchParams.set("mode",STATE.mode);
+  history.replaceState(null,"",u);
+}
+function go(){ syncToolbar(); renderCard(STATE.date,STATE.mode); fitStage(); }
+function shiftDate(dir){
+  const ds=availableDates(); const i=ds.indexOf(STATE.date);
+  const ni=Math.min(ds.length-1,Math.max(0,(i<0?0:i)+dir));
+  if(ds[ni]){ STATE.date=ds[ni]; go(); }
+}
+
+/* ย่อ stage ให้พอดีจอ (เฉพาะการแสดงผล — ไม่กระทบไฟล์ export)
+   wrapper ถูกกำหนดขนาด = ขนาดที่ย่อแล้ว จึงไม่เกิด scroll แนวนอน */
+function fitStage(){
+  const avail=Math.min(window.innerWidth-24, 1080);
+  const s=Math.min(1, avail/1080);
+  document.getElementById("stage").style.transform=`scale(${s})`;
+  const wrap=document.getElementById("stagewrap");
+  wrap.style.width=(1080*s)+"px";
+  wrap.style.height=(1350*s)+"px";
+}
+window.addEventListener("resize",fitStage);
+
+/* ---------- init ---------- */
+(async function init(){
+  DATA=await loadData();
+  const qs=new URLSearchParams(location.search);
+  const today=new Date(); const todayISO=today.getFullYear()+"-"+String(today.getMonth()+1).padStart(2,"0")+"-"+String(today.getDate()).padStart(2,"0");
+  // clampDate ใช้ today จริง
+  const ds=availableDates();
+  // มี ?date= รูปแบบถูกต้อง = ใช้ตามนั้น (ไม่มีแมตช์ก็โชว์ empty — ตรงกับ date-picker)
+  // ไม่มี/รูปแบบผิด = default เป็นวันนี้ ไม่งั้นวันแรกที่มีข้อมูล
+  let d=qs.get("date");
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d||"")) d = ds.includes(todayISO) ? todayISO : (ds[0]||todayISO);
+  STATE.date=d;
+  STATE.mode = qs.get("mode")==="results" ? "results" : "preview";
+
+  document.getElementById("prev").onclick=()=>shiftDate(-1);
+  document.getElementById("next").onclick=()=>shiftDate(1);
+  document.getElementById("datein").onchange=e=>{ STATE.date=e.target.value; go(); };
+  document.querySelectorAll("#modeseg button").forEach(b=>b.onclick=()=>{ STATE.mode=b.dataset.m; go(); });
+  document.getElementById("dl").onclick=exportPNG;
+
+  // ฝังฟอนต์ตั้งแต่แรกให้จอ = รูป export และ pre-warm
+  ensureFontStyle();
+  go();
+  // วัด fit ใหม่หลังฟอนต์โหลดจริง (metric ต่างจาก fallback ตอน cold load)
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{
+    if(document.querySelector("#card .rows")) fitRows();
+  });
+})();
+</script>
+</body>
+</html>

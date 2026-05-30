@@ -1,5 +1,6 @@
 # ไฟล์ชั่วคราว / cache / log
 cache/
+cards/
 extract_log.txt
 _summary*.txt
 _sheet.b64

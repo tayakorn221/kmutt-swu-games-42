@@ -3,10 +3,14 @@
   "builds": [
     { "src": "api/matches.py", "use": "@vercel/python", "config": { "includeFiles": "scraper.py" } },
     { "src": "index.html", "use": "@vercel/static" },
-    { "src": "data.js", "use": "@vercel/static" }
+    { "src": "data.js", "use": "@vercel/static" },
+    { "src": "summary.html", "use": "@vercel/static" },
+    { "src": "summary-fonts.js", "use": "@vercel/static" },
+    { "src": "html-to-image.js", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/matches", "dest": "/api/matches.py" },
+    { "src": "/summary/(\\d{4}-\\d{2}-\\d{2})", "dest": "/summary.html?date=$1" },
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
