@@ -1,5 +1,9 @@
 # Deploy ขึ้น Vercel (ปุ่มดึงข้อมูลสดในเว็บ)
 
+> ✅ **LIVE แล้ว:** https://kmutt-swu-games-42-6cmb.vercel.app/
+> `/api/matches` ขูดสดจาก tournamentsoftware + merge สกอร์จาก Google Sheet
+> ตั้งค่าใช้ `builds`/`routes` ใน `vercel.json` (ไม่ใช่ zero-config — ดูหมายเหตุท้ายไฟล์)
+
 เว็บนี้ทำงานได้ 2 ที่:
 - **GitHub Pages** (เดิม): อ่านข้อมูลจาก Google Sheet — ยังใช้ได้เป็น fallback
 - **Vercel** (ใหม่): มี `/api/matches` ขูดข้อมูลสดจาก tournamentsoftware + merge สกอร์จากชีต
