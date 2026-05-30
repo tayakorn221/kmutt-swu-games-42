@@ -1,9 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "regions": ["sin1"],
-  "functions": {
-    "api/matches.py": {
-      "maxDuration": 60
-    }
-  }
+  "regions": ["sin1"]
 }

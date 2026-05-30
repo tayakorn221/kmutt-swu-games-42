@@ -1,2 +1,1 @@
-# ไม่มี dependency ภายนอก — scraper.py ใช้ Python standard library ล้วน
-# (ไฟล์นี้มีไว้ให้ Vercel ตรวจจับว่าเป็นโปรเจกต์ Python)
+# stdlib only - no external dependencies
