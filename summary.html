@@ -173,6 +173,21 @@ body{
 .ft-mark{font-weight:800;font-size:19px;color:var(--muted);letter-spacing:.4px}
 .ft-mark b{color:#fff}
 .ft-tag{font-weight:800;font-size:19px;color:var(--orange);letter-spacing:.3px}
+
+/* ===== ธีมสว่าง: แถวขาวบนเฟรมมืด (แบบตารางบ้าแบด รูป 2-3) — เปลี่ยนเฉพาะแถว ===== */
+#card.light .row{background:#FFFFFF;border-color:#E6E9F1}
+#card.light .row.kmuttwin{background:#EAF9F1;border-color:#9DE2BD}
+#card.light .row.kmuttlose .rmatch{opacity:.7}
+#card.light .row.bye{background:#F2F5FA;border-color:#DBE0EA}
+#card.light .nm{color:#232a37}
+#card.light .rside.k .nm{color:#0E1320}
+#card.light .rside.win .nm{color:#0E1320}
+#card.light .rside.dim .nm{color:#9AA3B2}
+#card.light .vs{color:#C28A1B;text-shadow:none}
+#card.light .vs.bye{color:#6E8DB5}
+#card.light .score{color:#1A2230}
+#card.light .meta{color:#8C98AA}
+#card.light .pill.wait{color:#A86E15;background:rgba(240,169,46,.16);border-color:rgba(240,169,46,.5)}
 </style>
 </head>
 <body>
@@ -187,6 +202,10 @@ body{
   <div class="seg" id="modeseg">
     <button data-m="preview" class="on">เช้า · พรีวิว</button>
     <button data-m="results">ค่ำ · ผล</button>
+  </div>
+  <div class="seg" id="themeseg">
+    <button data-t="dark" class="on">🌙 มืด</button>
+    <button data-t="light">☀️ สว่าง</button>
   </div>
   <button class="dl" id="dl">⬇ ดาวน์โหลด PNG</button>
 </div>
@@ -450,7 +469,7 @@ async function exportPNG(){
       style:{margin:"0"}
     });
     const a=document.createElement("a");
-    a.download=`summary-${STATE.date}-${STATE.mode}.png`; a.href=dataUrl; a.click();
+    a.download=`summary-${STATE.date}-${STATE.mode}${STATE.theme==="light"?"-light":""}.png`; a.href=dataUrl; a.click();
   }catch(e){ alert("สร้างรูปไม่สำเร็จ: "+e); console.error(e); }
   finally{ btn.disabled=false; btn.textContent=old; }
 }
@@ -458,17 +477,20 @@ async function exportPNG(){
 /* ============================================================
    STATE / URL / TOOLBAR
    ============================================================ */
-const STATE={date:"",mode:"preview"};
+const STATE={date:"",mode:"preview",theme:"dark"};
+function applyTheme(){ document.getElementById("card").classList.toggle("light", STATE.theme==="light"); }
 function availableDates(){ return [...new Set(DATA.map(dateKey))].filter(Boolean).sort(); }
 function syncToolbar(){
   document.getElementById("datein").value=STATE.date;
   document.querySelectorAll("#modeseg button").forEach(b=>b.classList.toggle("on",b.dataset.m===STATE.mode));
+  document.querySelectorAll("#themeseg button").forEach(b=>b.classList.toggle("on",b.dataset.t===STATE.theme));
   document.getElementById("hintmode").textContent=STATE.mode;
-  document.getElementById("hinturl").textContent=`summary.html?date=${STATE.date}&mode=${STATE.mode}`;
+  document.getElementById("hinturl").textContent=`summary.html?date=${STATE.date}&mode=${STATE.mode}${STATE.theme==="light"?"&theme=light":""}`;
   const u=new URL(location); u.searchParams.set("date",STATE.date); u.searchParams.set("mode",STATE.mode);
+  if(STATE.theme==="light") u.searchParams.set("theme","light"); else u.searchParams.delete("theme");
   history.replaceState(null,"",u);
 }
-function go(){ syncToolbar(); renderCard(STATE.date,STATE.mode); fitStage(); }
+function go(){ syncToolbar(); renderCard(STATE.date,STATE.mode); applyTheme(); fitStage(); }
 function shiftDate(dir){
   const ds=availableDates(); const i=ds.indexOf(STATE.date);
   const ni=Math.min(ds.length-1,Math.max(0,(i<0?0:i)+dir));
@@ -500,11 +522,13 @@ window.addEventListener("resize",fitStage);
   if(!/^\d{4}-\d{2}-\d{2}$/.test(d||"")) d = ds.includes(todayISO) ? todayISO : (ds[0]||todayISO);
   STATE.date=d;
   STATE.mode = qs.get("mode")==="results" ? "results" : "preview";
+  STATE.theme = qs.get("theme")==="light" ? "light" : "dark";
 
   document.getElementById("prev").onclick=()=>shiftDate(-1);
   document.getElementById("next").onclick=()=>shiftDate(1);
   document.getElementById("datein").onchange=e=>{ STATE.date=e.target.value; go(); };
   document.querySelectorAll("#modeseg button").forEach(b=>b.onclick=()=>{ STATE.mode=b.dataset.m; go(); });
+  document.querySelectorAll("#themeseg button").forEach(b=>b.onclick=()=>{ STATE.theme=b.dataset.t; go(); });
   document.getElementById("dl").onclick=exportPNG;
 
   // ฝังฟอนต์ตั้งแต่แรกให้จอ = รูป export และ pre-warm
