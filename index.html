@@ -78,12 +78,17 @@ header{padding:clamp(20px,5vw,38px) 0 14px}
 .chip .ct{background:rgba(0,0,0,.08);border-radius:999px;padding:0 7px;font-size:11px}
 .chip.on .ct{background:rgba(255,255,255,.2)}
 
-/* ---- day section ---- */
-.day{margin:26px 0 6px;display:flex;align-items:baseline;gap:12px}
-.day h2{font-size:19px;font-weight:600;letter-spacing:-.01em}
-.day .dnum{font-family:'Bai Jamjuree';font-weight:700;color:var(--orange);font-size:19px}
+/* ---- day section (หัววันที่ติดหนึบ sticky ตามการเลื่อน) ---- */
+.day{position:sticky;top:var(--ctrl-h,96px);z-index:10;
+  display:flex;align-items:center;gap:11px;
+  margin:24px 0 0;padding:9px 0;background:var(--paper);
+  box-shadow:0 7px 10px -9px rgba(42,33,27,.22)}
+.day .dnum{font-family:'Bai Jamjuree';font-weight:700;color:#fff;background:var(--orange);
+  font-size:14px;padding:4px 12px;border-radius:999px;letter-spacing:.01em;white-space:nowrap;
+  box-shadow:0 2px 7px -1px rgba(237,106,28,.45)}
+.day h2{font-size:18px;font-weight:600;letter-spacing:-.01em}
 .day .dline{flex:1;height:1px;background:var(--line)}
-.day .dcount{font-size:12.5px;color:var(--ink-soft)}
+.day .dcount{font-size:12.5px;color:var(--ink-soft);font-weight:500;white-space:nowrap}
 
 /* ---- match card ---- */
 .match{background:var(--card);border:1px solid var(--line);border-radius:15px;
@@ -339,6 +344,14 @@ function roundTH(r){return (r||"")
   .replace("Quarter-final","รอบ 8 คู่").replace("Quarterfinal","รอบ 8 คู่")
   .replace("Semi-final","รอบรองชนะเลิศ").replace("Semifinal","รอบรองชนะเลิศ")
   .replace("Final","รอบชิงชนะเลิศ");}
+/* ตั้งระยะ top ของหัววันที่ให้ติดใต้แถบค้นหา/กรองพอดี (วัดแม่นยำเสมอ) */
+function setCtrlH(){const c=document.querySelector('.controls');
+  if(c)document.documentElement.style.setProperty('--ctrl-h',(c.offsetHeight-1)+'px');}
+window.addEventListener('resize',setCtrlH);
+if(window.ResizeObserver){const ro=new ResizeObserver(setCtrlH);
+  const c=document.querySelector('.controls');if(c)ro.observe(c);}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(setCtrlH);
+
 function render(){
   renderBoard();renderChips();
   const q=el("q").value.trim().toLowerCase();
@@ -360,6 +373,7 @@ function render(){
       <span class="dline"></span><span class="dcount">${items.length} แมตช์</span></div>
       ${items.map(matchHTML).join("")}`;
   }).join("");
+  setCtrlH();
 }
 
 /* ---------- load ---------- */
