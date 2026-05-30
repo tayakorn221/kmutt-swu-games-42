@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>มจธ. · มศว เกมส์ 42 — ติดตามผลแบดมินตัน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange:#ED6A1C; --orange-deep:#C9520F; --orange-soft:#FCEADD;
+  --ink:#2A211B; --ink-soft:#6B5D52; --paper:#FBF6F0; --card:#FFFFFF;
+  --line:#EBDFD3; --gold:#D9A441;
+  --win:#2F8F5B; --win-bg:#E7F4EC; --lose:#C0453B; --lose-bg:#FBE9E7;
+  --bye:#5B7A9B; --bye-bg:#EAF1F7; --wait:#A8845B; --wait-bg:#F6EEE2;
+  --shadow:0 1px 2px rgba(42,33,27,.05),0 8px 24px -12px rgba(201,82,15,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Sarabun',sans-serif;color:var(--ink);background:var(--paper);
+  line-height:1.5;font-size:16px;
+  background-image:radial-gradient(circle at 15% -5%,rgba(237,106,28,.07),transparent 40%);
+  min-height:100vh;
+}
+h1,h2,h3,.disp{font-family:'Bai Jamjuree',sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:0 clamp(14px,4vw,26px)}
+
+/* ---- header ---- */
+header{padding:clamp(20px,5vw,38px) 0 14px}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{
+  font-family:'Bai Jamjuree';font-weight:700;font-size:clamp(26px,7vw,40px);
+  letter-spacing:-.02em;line-height:1;color:var(--orange);position:relative;
+}
+.mark b{color:var(--ink)}
+.kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--orange-deep);font-weight:600;font-family:'Bai Jamjuree';margin-bottom:6px}
+.subtitle{color:var(--ink-soft);font-size:14.5px;margin-top:9px;max-width:46ch}
+.subtitle .dot{color:var(--orange);font-weight:700}
+
+/* ---- scoreboard ---- */
+.board{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:16px;
+  overflow:hidden;margin-top:22px;box-shadow:var(--shadow)}
+.board .cell{background:var(--card);padding:14px 8px 12px;text-align:center}
+.board .cell:first-child{background:var(--ink);color:#fff}
+.board .cell:first-child .num{color:#fff}
+.board .num{font-family:'Bai Jamjuree';font-weight:700;font-size:clamp(22px,6vw,30px);
+  line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.board .lab{font-size:11px;color:var(--ink-soft);margin-top:6px;font-weight:500;
+  letter-spacing:.02em}
+.board .cell.c-win .num{color:var(--win)} .board .cell.c-lose .num{color:var(--lose)}
+.board .cell.c-bye .num{color:var(--bye)} .board .cell.c-wait .num{color:var(--wait)}
+
+/* ---- controls ---- */
+.controls{position:sticky;top:0;z-index:20;background:var(--paper);
+  padding:14px 0 10px;margin-top:8px;
+  border-bottom:1px solid var(--line)}
+.search{position:relative;margin-bottom:11px}
+.search input{width:100%;border:1.5px solid var(--line);background:var(--card);
+  border-radius:12px;padding:11px 14px 11px 40px;font-family:inherit;font-size:15px;
+  color:var(--ink);transition:border-color .18s,box-shadow .18s}
+.search input:focus{outline:none;border-color:var(--orange);
+  box-shadow:0 0 0 4px rgba(237,106,28,.13)}
+.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  width:17px;height:17px;color:var(--ink-soft)}
+.chips{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;border:1.5px solid var(--line);background:var(--card);
+  color:var(--ink-soft);border-radius:999px;padding:7px 14px;font-size:13.5px;
+  font-weight:600;font-family:'Bai Jamjuree';cursor:pointer;white-space:nowrap;
+  transition:all .16s;display:flex;align-items:center;gap:6px}
+.chip:hover{border-color:var(--orange)}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip .ct{background:rgba(0,0,0,.08);border-radius:999px;padding:0 7px;font-size:11px}
+.chip.on .ct{background:rgba(255,255,255,.2)}
+
+/* ---- day section ---- */
+.day{margin:26px 0 6px;display:flex;align-items:baseline;gap:12px}
+.day h2{font-size:19px;font-weight:600;letter-spacing:-.01em}
+.day .dnum{font-family:'Bai Jamjuree';font-weight:700;color:var(--orange);font-size:19px}
+.day .dline{flex:1;height:1px;background:var(--line)}
+.day .dcount{font-size:12.5px;color:var(--ink-soft)}
+
+/* ---- match card ---- */
+.match{background:var(--card);border:1px solid var(--line);border-radius:15px;
+  padding:15px 16px;margin-top:11px;box-shadow:var(--shadow);position:relative;
+  overflow:hidden}
+.match::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:var(--line)}
+.match.r-win::before{background:var(--win)} .match.r-lose::before{background:var(--lose)}
+.match.r-bye::before{background:var(--bye)} .match.r-wait::before{background:var(--orange)}
+.m-top{display:flex;align-items:center;gap:9px;margin-bottom:11px;flex-wrap:wrap}
+.ev{font-family:'Bai Jamjuree';font-weight:700;font-size:13px;color:#fff;
+  background:var(--orange);padding:3px 9px;border-radius:7px;letter-spacing:.01em}
+.rnd{font-size:12.5px;color:var(--ink-soft);font-weight:500}
+.m-when{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:12.5px;
+  color:var(--ink-soft);font-weight:500}
+.m-when .t{font-family:'Bai Jamjuree';font-weight:600;color:var(--ink);
+  font-variant-numeric:tabular-nums}
+.side{display:flex;align-items:center;gap:10px;padding:3px 0}
+.side .who{flex:1;min-width:0}
+.side .nm{font-weight:600;font-size:15.5px;line-height:1.32}
+.side.kmutt .nm{color:var(--orange-deep)}
+.side .uni{font-size:12.5px;color:var(--ink-soft);margin-top:1px}
+.side .tag{flex:0 0 auto;font-family:'Bai Jamjuree';font-size:11px;font-weight:700;
+  padding:2px 7px;border-radius:6px;letter-spacing:.03em}
+.side.kmutt .tag{background:var(--orange-soft);color:var(--orange-deep)}
+.vs{display:flex;align-items:center;gap:10px;margin:7px 0}
+.vs .ln{flex:1;height:1px;background:var(--line)}
+.vs span{font-family:'Bai Jamjuree';font-weight:700;font-size:11px;color:var(--ink-soft);
+  letter-spacing:.1em}
+.m-foot{display:flex;align-items:center;gap:9px;margin-top:12px;
+  padding-top:11px;border-top:1px dashed var(--line)}
+.res{font-family:'Bai Jamjuree';font-weight:700;font-size:13px;padding:4px 11px;
+  border-radius:8px;display:inline-flex;align-items:center;gap:5px}
+.res.win{background:var(--win-bg);color:var(--win)}
+.res.lose{background:var(--lose-bg);color:var(--lose)}
+.res.bye{background:var(--bye-bg);color:var(--bye)}
+.res.wait{background:var(--wait-bg);color:var(--wait)}
+.score{font-family:'Bai Jamjuree';font-weight:600;color:var(--ink);font-size:14px;
+  font-variant-numeric:tabular-nums}
+.court{margin-left:auto;font-size:12px;color:var(--ink-soft);display:flex;
+  align-items:center;gap:4px}
+
+/* ---- states ---- */
+.empty{text-align:center;padding:48px 20px;color:var(--ink-soft)}
+.empty .big{font-family:'Bai Jamjuree';font-weight:600;font-size:18px;color:var(--ink);
+  margin-bottom:6px}
+.skeleton{height:104px;border-radius:15px;margin-top:11px;
+  background:linear-gradient(100deg,var(--card) 30%,#f3ebe2 50%,var(--card) 70%);
+  background-size:200% 100%;animation:sk 1.3s infinite}
+@keyframes sk{to{background-position:-200% 0}}
+
+/* ---- footer / settings ---- */
+footer{margin:40px 0 30px;padding-top:20px;border-top:1px solid var(--line);
+  color:var(--ink-soft);font-size:13px}
+.src{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.live{display:inline-flex;align-items:center;gap:6px;font-weight:600;
+  color:var(--win);font-family:'Bai Jamjuree';font-size:12.5px}
+.live .pulse{width:8px;height:8px;border-radius:50%;background:var(--win);
+  animation:pulse 1.6s infinite}
+.live.off{color:var(--ink-soft)} .live.off .pulse{background:var(--ink-soft);animation:none}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(47,143,91,.5)}70%{box-shadow:0 0 0 7px rgba(47,143,91,0)}100%{box-shadow:0 0 0 0 rgba(47,143,91,0)}}
+.btn{font-family:'Bai Jamjuree';font-weight:600;font-size:13px;cursor:pointer;
+  border:1.5px solid var(--line);background:var(--card);color:var(--ink);
+  border-radius:9px;padding:7px 13px;transition:all .15s;display:inline-flex;
+  align-items:center;gap:6px}
+.btn:hover{border-color:var(--orange);color:var(--orange-deep)}
+.btn.primary{background:var(--orange);color:#fff;border-color:var(--orange)}
+.btn.primary:hover{background:var(--orange-deep);color:#fff}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:18px;margin-top:14px;box-shadow:var(--shadow);display:none}
+.panel.open{display:block;animation:fade .25s ease-out}
+@keyframes fade{from{opacity:0;transform:translateY(-4px)}}
+.panel h3{font-size:15px;margin-bottom:4px}
+.panel p{font-size:13px;color:var(--ink-soft);margin-bottom:11px}
+.panel ol{font-size:13px;color:var(--ink-soft);margin:0 0 12px 18px;line-height:1.8}
+.panel input{width:100%;border:1.5px solid var(--line);border-radius:10px;
+  padding:10px 12px;font-family:inherit;font-size:13.5px;margin-bottom:10px}
+.panel input:focus{outline:none;border-color:var(--orange)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.note{font-size:12px;color:var(--ink-soft);margin-top:9px}
+@media(max-width:430px){
+  .board{grid-template-columns:repeat(5,1fr)}
+  .board .lab{font-size:10px}
+  .m-when{width:100%;margin-left:0;order:3}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">มศว เกมส์ ครั้งที่ 42 · แบดมินตัน</div>
+    <div class="brand"><div class="mark">มจธ<b>.</b> <span style="font-family:Sarabun;font-weight:600;font-size:.45em;color:var(--ink-soft)">ติดตามผลทีม</span></div></div>
+    <p class="subtitle">กีฬาบุคลากรมหาวิทยาลัยแห่งประเทศไทย <span class="dot">·</span> อาคารกีฬา 2 มศว องครักษ์ <span class="dot">·</span> 31 พ.ค.–4 มิ.ย. 2569</p>
+    <div class="board" id="board"></div>
+  </header>
+
+  <div class="controls">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="q" type="search" placeholder="ค้นหานักกีฬา / คู่แข่ง / มหาวิทยาลัย…" autocomplete="off">
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <main id="list"></main>
+
+  <footer>
+    <div class="src">
+      <span id="live" class="live off"><span class="pulse"></span><span id="liveTxt">ข้อมูลตัวอย่าง (ออฟไลน์)</span></span>
+      <button class="btn" id="refreshBtn" style="margin-left:auto">↻ รีเฟรช</button>
+      <button class="btn" id="cfgBtn">⚙ เชื่อม Google Sheet</button>
+    </div>
+    <div class="panel" id="panel">
+      <h3>เชื่อมต่อ Google Sheets</h3>
+      <p>กรอกผลใน Google Sheet แล้วเว็บนี้จะดึงมาแสดงให้อัตโนมัติ — อัปเดตได้หลายคน</p>
+      <ol>
+        <li>เปิด Google Sheets → นำเข้าไฟล์ <b>kmutt_sheet.csv</b> (ไฟล์ → นำเข้า)</li>
+        <li>กดปุ่ม <b>แชร์</b> → "ทุกคนที่มีลิงก์" → สิทธิ์ <b>ผู้มีสิทธิ์ดู</b></li>
+        <li>คัดลอกลิงก์ของ Sheet มาวางด้านล่าง แล้วกดบันทึก</li>
+        <li>เวลาแข่ง: แก้คอลัมน์ <b>ผล</b> (ชนะ/แพ้/บาย) และ <b>สกอร์</b> ใน Sheet ได้เลย</li>
+      </ol>
+      <input id="sheetUrl" type="url" placeholder="วางลิงก์ Google Sheet ที่นี่ (…/spreadsheets/d/…)">
+      <div class="row">
+        <button class="btn primary" id="saveCfg">บันทึก & เชื่อมต่อ</button>
+        <button class="btn" id="clearCfg">ใช้ข้อมูลในเครื่อง</button>
+      </div>
+      <div class="note">เคล็ดลับ: คอลัมน์ <b>ผล</b> ใส่ได้ <b>ชนะ / แพ้ / บาย</b> (เว้นว่าง = ยังไม่แข่ง) · <b>สกอร์</b> เช่น <b>21-15, 21-18</b></div>
+    </div>
+    <p style="margin-top:16px;font-size:12px">ทำด้วย ♥ สำหรับทีมบุคลากร มจธ. · ข้อมูลโปรแกรมจาก tournamentsoftware.com</p>
+  </footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+const LS_URL="kmutt_sheet_url";
+let DATA=[], FILTER="all", DAYKEY="all";
+const el=id=>document.getElementById(id);
+
+/* ---------- data source ---------- */
+function deriveCsv(input){
+  input=input.trim(); if(!input) return null;
+  if(/output=csv/.test(input)) return input;
+  if(/\/pub/.test(input)){return input+(input.includes("?")?"&":"?")+"output=csv";}
+  const m=input.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  if(m){let gid="0";const g=input.match(/[#&?]gid=(\d+)/);if(g)gid=g[1];
+    return `https://docs.google.com/spreadsheets/d/${m[1]}/gviz/tq?tqx=out:csv&gid=${gid}`;}
+  return input;
+}
+function parseCSV(t){
+  const rows=[];let row=[],f="",q=false;
+  for(let i=0;i<t.length;i++){const c=t[i];
+    if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}
+    else{if(c=='"')q=true;else if(c==',')row.push(f),f="";
+      else if(c=='\n'){row.push(f);rows.push(row);row=[];f=""}
+      else if(c=='\r'){}else f+=c}}
+  if(f!==""||row.length)row.push(f),rows.push(row);
+  return rows;
+}
+function fromSheet(csv){
+  const rows=parseCSV(csv).filter(r=>r.length>3&&r.some(x=>x&&x.trim()));
+  rows.shift(); // header
+  return rows.map(r=>{
+    const g=i=>(r[i]||"").trim();
+    const k=[g(7),g(8)].filter(Boolean);
+    const o=[g(9),g(10)].filter(Boolean).map(n=>({name:n,uni:g(11)}));
+    return {id:g(0),event:g(5),round:g(6),th:(g(1)+" "+g(2)).trim(),
+      iso:(g(3)+" "+g(2)).trim(),court:g(4),kmutt:k,opp:o.length?o:[{name:"Bye",uni:""}],
+      result:g(12),score:g(13)};
+  });
+}
+function fromFallback(){return (window.KMUTT_FALLBACK?.matches||[]).map(m=>({...m}));}
+
+/* ---------- result classification ---------- */
+function rclass(r){r=(r||"").trim();
+  if(/ชนะ|^w$|win/i.test(r))return"win";
+  if(/แพ้|^l$|lose|loss/i.test(r))return"lose";
+  if(/บาย|bye/i.test(r))return"bye";
+  return"wait";}
+function rlabel(c){return{win:"ชนะ",lose:"แพ้",bye:"บาย",wait:"ยังไม่แข่ง"}[c]}
+
+/* ---------- day grouping ---------- */
+const THDAY={"0":"อาทิตย์","1":"จันทร์","2":"อังคาร","3":"พุธ","4":"พฤหัสบดี","5":"ศุกร์","6":"เสาร์"};
+function dayInfo(iso){
+  const d=iso.slice(0,10); if(!/^\d{4}-\d\d-\d\d/.test(d))return{key:"zzz",label:"ยังไม่กำหนด",num:""};
+  const [y,mo,da]=d.split("-").map(Number);
+  const wd=new Date(Date.UTC(y,mo-1,da)).getUTCDay();
+  const TM=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+  return{key:d,label:"วัน"+THDAY[wd],num:da+" "+TM[mo-1],be:y+543};
+}
+
+/* ---------- render ---------- */
+function compute(){
+  const c={total:DATA.length,win:0,lose:0,bye:0,wait:0};
+  DATA.forEach(m=>c[rclass(m.result)]++);return c;
+}
+function renderBoard(){
+  const c=compute();
+  el("board").innerHTML=[
+    ["",c.total,"แมตช์"],["c-win",c.win,"ชนะ"],["c-lose",c.lose,"แพ้"],
+    ["c-bye",c.bye,"บาย"],["c-wait",c.wait,"รอแข่ง"]
+  ].map(([cl,n,l])=>`<div class="cell ${cl}"><div class="num">${n}</div><div class="lab">${l}</div></div>`).join("");
+}
+function renderChips(){
+  const c=compute();
+  const opts=[["all","ทั้งหมด",c.total],["wait","รอแข่ง",c.wait],
+    ["win","ชนะ",c.win],["lose","แพ้",c.lose],["bye","บาย",c.bye]];
+  el("chips").innerHTML=opts.map(([k,l,n])=>
+    `<button class="chip ${FILTER==k?'on':''}" data-f="${k}">${l}<span class="ct">${n}</span></button>`).join("");
+  el("chips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{FILTER=b.dataset.f;render()});
+}
+function sideHTML(names,uni,isK){
+  const nm=names.length?names.join("  /  "):"—";
+  return `<div class="side ${isK?'kmutt':''}">
+    <div class="who"><div class="nm">${esc(nm)}</div>${uni?`<div class="uni">${esc(uni)}</div>`:""}</div>
+    ${isK?'<span class="tag">มจธ.</span>':''}</div>`;
+}
+function esc(s){return (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
+function matchHTML(m){
+  const cls=rclass(m.result);
+  const oppNames=m.opp.map(o=>o.name).filter(n=>n&&n!=="Bye");
+  const oppUni=[...new Set(m.opp.map(o=>o.uni).filter(Boolean))].join(", ");
+  const isBye=cls==="bye"||!oppNames.length;
+  const time=(m.th.match(/\d{1,2}:\d{2}/)||[""])[0];
+  return `<div class="match r-${cls}">
+    <div class="m-top">
+      <span class="ev">${esc(m.event)}</span>
+      <span class="rnd">${esc(roundTH(m.round))}</span>
+      <span class="m-when">${time?`<span class="t">${time} น.</span>`:'<span>ยังไม่กำหนดเวลา</span>'}</span>
+    </div>
+    ${sideHTML(m.kmutt,"",true)}
+    <div class="vs"><span class="ln"></span><span>${isBye?'บาย':'พบ'}</span><span class="ln"></span></div>
+    ${isBye?'<div class="side"><div class="who"><div class="nm" style="color:var(--bye)">ผ่านเข้ารอบ (ไม่ต้องแข่ง)</div></div></div>'
+      :sideHTML(oppNames,oppUni,false)}
+    <div class="m-foot">
+      <span class="res ${cls}">${rlabel(cls)}</span>
+      ${m.score?`<span class="score">${esc(m.score)}</span>`:''}
+      ${m.court?`<span class="court">📍 ${esc(m.court)}</span>`:''}
+    </div></div>`;
+}
+function roundTH(r){return (r||"")
+  .replace("Round of 128","รอบ 128 คู่").replace("Round of 64","รอบ 64 คู่")
+  .replace("Round of 32","รอบ 32 คู่").replace("Round of 16","รอบ 16 คู่")
+  .replace("Quarter-final","รอบ 8 คู่").replace("Quarterfinal","รอบ 8 คู่")
+  .replace("Semi-final","รอบรองชนะเลิศ").replace("Semifinal","รอบรองชนะเลิศ")
+  .replace("Final","รอบชิงชนะเลิศ");}
+function render(){
+  renderBoard();renderChips();
+  const q=el("q").value.trim().toLowerCase();
+  let ms=DATA.filter(m=>{
+    if(FILTER!=="all"&&rclass(m.result)!==FILTER)return false;
+    if(q){const hay=(m.kmutt.join(" ")+" "+m.opp.map(o=>o.name+" "+o.uni).join(" ")+" "+m.event).toLowerCase();
+      if(!hay.includes(q))return false}
+    return true;});
+  ms.sort((a,b)=>(a.iso||"z").localeCompare(b.iso||"z"));
+  if(!ms.length){el("list").innerHTML=
+    `<div class="empty"><div class="big">ไม่พบแมตช์ที่ตรงกับเงื่อนไข</div><div>ลองล้างคำค้นหรือเปลี่ยนตัวกรอง</div></div>`;return}
+  const groups={};
+  ms.forEach(m=>{const di=dayInfo(m.iso);(groups[di.key]=groups[di.key]||{di,items:[]}).items.push(m)});
+  el("list").innerHTML=Object.keys(groups).sort().map(k=>{
+    const{di,items}=groups[k];
+    let label=di.label,num=di.num||"";
+    if(k==="zzz"&&items.every(m=>rclass(m.result)==="bye")){label="ผ่านเข้ารอบ (บาย)";num="✦";}
+    return `<div class="day"><span class="dnum">${num}</span><h2>${label}</h2>
+      <span class="dline"></span><span class="dcount">${items.length} แมตช์</span></div>
+      ${items.map(matchHTML).join("")}`;
+  }).join("");
+}
+
+/* ---------- load ---------- */
+function setLive(on,txt){const l=el("live");l.className="live"+(on?"":" off");
+  el("liveTxt").textContent=txt;}
+async function load(){
+  const url=localStorage.getItem(LS_URL);
+  if(url){
+    el("list").innerHTML='<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+    try{
+      const res=await fetch(deriveCsv(url),{cache:"no-store"});
+      if(!res.ok)throw 0;
+      const txt=await res.text();
+      const ms=fromSheet(txt);
+      if(!ms.length)throw 0;
+      DATA=ms;
+      const t=new Date();setLive(true,`เชื่อม Google Sheet · อัปเดต ${t.getHours()}:${String(t.getMinutes()).padStart(2,"0")}`);
+      render();return;
+    }catch(e){setLive(false,"เชื่อม Sheet ไม่ได้ — แสดงข้อมูลในเครื่อง");}
+  }else setLive(false,"ข้อมูลโปรแกรม (ในเครื่อง)");
+  DATA=fromFallback();render();
+}
+
+/* ---------- events ---------- */
+el("q").addEventListener("input",render);
+el("refreshBtn").onclick=load;
+el("cfgBtn").onclick=()=>el("panel").classList.toggle("open");
+el("sheetUrl").value=localStorage.getItem(LS_URL)||"";
+el("saveCfg").onclick=()=>{const v=el("sheetUrl").value.trim();
+  if(v)localStorage.setItem(LS_URL,v);else localStorage.removeItem(LS_URL);
+  el("panel").classList.remove("open");load();};
+el("clearCfg").onclick=()=>{localStorage.removeItem(LS_URL);el("sheetUrl").value="";
+  el("panel").classList.remove("open");load();};
+
+load();
+// auto-refresh ทุก 3 นาที เมื่อเชื่อม Sheet
+setInterval(()=>{if(localStorage.getItem(LS_URL))load();},180000);
+</script>
+</body>
+</html>

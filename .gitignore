@@ -1,0 +1,9 @@
+# ไฟล์ชั่วคราว / cache / log
+cache/
+extract_log.txt
+_summary*.txt
+nul
+__pycache__/
+*.pyc
+.DS_Store
+.claude/
