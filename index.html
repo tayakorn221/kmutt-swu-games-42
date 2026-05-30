@@ -238,6 +238,7 @@ footer{margin:40px 0 30px;padding-top:20px;border-top:1px solid var(--line);
 <script src="data.js"></script>
 <script>
 const LS_URL="kmutt_sheet_url";
+const DEFAULT_SHEET_URL="https://docs.google.com/spreadsheets/d/1f6hoUbGWd4_MRB_UQ4Q1e4ET7h9FR2fmcCmv5-KaYI8/edit";
 let DATA=[], FILTER="all", DAYKEY="all";
 const el=id=>document.getElementById(id);
 
@@ -426,7 +427,7 @@ function render(){
 function setLive(on,txt){const l=el("live");l.className="live"+(on?"":" off");
   el("liveTxt").textContent=txt;}
 async function load(){
-  const url=localStorage.getItem(LS_URL);
+  const url=localStorage.getItem(LS_URL)||DEFAULT_SHEET_URL;
   if(url){
     el("list").innerHTML='<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
     try{
@@ -447,16 +448,16 @@ async function load(){
 el("q").addEventListener("input",render);
 el("refreshBtn").onclick=load;
 el("cfgBtn").onclick=()=>el("panel").classList.toggle("open");
-el("sheetUrl").value=localStorage.getItem(LS_URL)||"";
+el("sheetUrl").value=localStorage.getItem(LS_URL)||DEFAULT_SHEET_URL;
 el("saveCfg").onclick=()=>{const v=el("sheetUrl").value.trim();
   if(v)localStorage.setItem(LS_URL,v);else localStorage.removeItem(LS_URL);
   el("panel").classList.remove("open");load();};
-el("clearCfg").onclick=()=>{localStorage.removeItem(LS_URL);el("sheetUrl").value="";
+el("clearCfg").onclick=()=>{localStorage.removeItem(LS_URL);el("sheetUrl").value=DEFAULT_SHEET_URL;
   el("panel").classList.remove("open");load();};
 
 load();
 // auto-refresh ทุก 3 นาที เมื่อเชื่อม Sheet
-setInterval(()=>{if(localStorage.getItem(LS_URL))load();},180000);
+setInterval(()=>{if(localStorage.getItem(LS_URL)||DEFAULT_SHEET_URL)load();},180000);
 </script>
 </body>
 </html>
