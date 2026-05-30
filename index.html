@@ -427,10 +427,26 @@ function render(){
 /* ---------- load ---------- */
 function setLive(on,txt){const l=el("live");l.className="live"+(on?"":" off");
   el("liveTxt").textContent=txt;}
-async function load(){
+function hhmm(t){return `${t.getHours()}:${String(t.getMinutes()).padStart(2,"0")}`;}
+// ① ข้อมูลสดจากต้นทาง ผ่าน serverless /api/matches (มีเฉพาะตอน deploy บน Vercel)
+async function tryApi(fresh){
+  try{
+    const res=await fetch("/api/matches"+(fresh?"?fresh=1":""),{cache:"no-store"});
+    if(!res.ok)throw 0;
+    const j=await res.json();
+    if(!j||!Array.isArray(j.matches)||!j.matches.length)throw 0;
+    DATA=j.matches.map(m=>({...m}));
+    setLive(true,`ข้อมูลสดจากต้นทาง · อัปเดต ${hhmm(new Date())}`);
+    render();return true;
+  }catch(e){return false;}
+}
+async function load(fresh){
+  el("list").innerHTML='<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+  // ① ลองดึงสดจากต้นทางก่อน (Vercel)
+  if(await tryApi(fresh))return;
+  // ② fallback: Google Sheet
   const url=localStorage.getItem(LS_URL)||DEFAULT_SHEET_URL;
   if(url){
-    el("list").innerHTML='<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
     try{
       const res=await fetch(deriveCsv(url),{cache:"no-store"});
       if(!res.ok)throw 0;
@@ -438,16 +454,17 @@ async function load(){
       const ms=fromSheet(txt);
       if(!ms.length)throw 0;
       DATA=ms;
-      const t=new Date();setLive(true,`เชื่อม Google Sheet · อัปเดต ${t.getHours()}:${String(t.getMinutes()).padStart(2,"0")}`);
+      setLive(true,`เชื่อม Google Sheet · อัปเดต ${hhmm(new Date())}`);
       render();return;
     }catch(e){setLive(false,"เชื่อม Sheet ไม่ได้ — แสดงข้อมูลในเครื่อง");}
   }else setLive(false,"ข้อมูลโปรแกรม (ในเครื่อง)");
+  // ③ fallback: data.js (ฝังในเว็บ)
   DATA=fromFallback();render();
 }
 
 /* ---------- events ---------- */
 el("q").addEventListener("input",render);
-el("refreshBtn").onclick=load;
+el("refreshBtn").onclick=()=>load(true);
 el("cfgBtn").onclick=()=>el("panel").classList.toggle("open");
 el("sheetUrl").value=localStorage.getItem(LS_URL)||DEFAULT_SHEET_URL;
 el("saveCfg").onclick=()=>{const v=el("sheetUrl").value.trim();

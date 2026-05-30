@@ -1,0 +1,9 @@
+{
+  "regions": ["sin1"],
+  "functions": {
+    "api/matches.py": {
+      "includeFiles": "scraper.py",
+      "maxDuration": 60
+    }
+  }
+}

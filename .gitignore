@@ -2,6 +2,7 @@
 cache/
 extract_log.txt
 _summary*.txt
+_sheet.b64
 nul
 __pycache__/
 *.pyc
