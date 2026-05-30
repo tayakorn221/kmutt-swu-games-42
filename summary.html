@@ -11,11 +11,12 @@
 <style>
 :root{
   --card-w:1080px; --card-h:1350px;
-  --orange:#FF6A1A; --orange-deep:#C9520F;
+  --orange:#FF6A1A; --orange-deep:#D8480C; --maroon:#9C1B3C; --maroon-deep:#73142C;
+  --gold:#E9B84A;
   --ink:#0E1217; --ink2:#161C25; --surface:#1C2430; --surface2:#222C3A;
-  --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.16);
+  --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.15);
   --text:#F4F7FB; --muted:#9AA7B8; --faint:#6B7888;
-  --win:#34D17F; --win-deep:#15A75E; --lose:#FF5B52; --wait:#E0A33C; --bye:#6E8DB5;
+  --win:#2FBF71; --win-deep:#15A75E; --lose:#FF5747; --wait:#F0A92E; --bye:#6E8DB5;
   --rs:1; /* row-scale ที่ auto-fit ปรับให้พอดีการ์ด */
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -47,122 +48,131 @@ body{
 .stage{transform-origin:top left}
 
 /* ===========================================================
-   CARD — 1080x1350 คงที่ (single source of truth ทั้ง 2 โหมด)
+   CARD — 1080x1350 (บ้าแบด/ตัวตึงแบด style, single source ทั้ง 2 โหมด)
    =========================================================== */
 #card{
   width:var(--card-w);height:var(--card-h);position:relative;overflow:hidden;
   background:
-    radial-gradient(120% 80% at 88% -8%,rgba(255,106,26,.20),transparent 55%),
-    radial-gradient(90% 60% at -10% 108%,rgba(52,209,127,.10),transparent 55%),
-    linear-gradient(168deg,#10151D 0%,#0B0F15 60%,#0E141C 100%);
+    radial-gradient(115% 65% at 50% -12%,rgba(255,106,26,.16),transparent 60%),
+    radial-gradient(80% 50% at 102% 104%,rgba(45,125,210,.12),transparent 60%),
+    linear-gradient(170deg,#0E131C 0%,#0A0D14 55%,#0C111A 100%);
   color:var(--text);font-family:'IBM Plex Sans Thai',sans-serif;
-  display:flex;flex-direction:column;
-  padding:64px 60px 0;
+  display:flex;flex-direction:column;padding:50px 50px 0;
 }
 #card::before{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg,transparent 78%,rgba(0,0,0,.35));}
-#card::after{content:"";position:absolute;left:0;right:0;top:0;height:8px;
-  background:linear-gradient(90deg,var(--orange),#FFB36B 60%,var(--orange-deep));}
+  background:
+    linear-gradient(180deg,transparent 82%,rgba(0,0,0,.42)),
+    repeating-linear-gradient(90deg,transparent 0 119px,rgba(255,255,255,.016) 119px 120px);}
+#card::after{content:"";position:absolute;left:0;right:0;top:0;height:7px;
+  background:linear-gradient(90deg,var(--orange),#FFC074 55%,var(--orange-deep));}
 
-/* ---- header ---- */
-.hd{position:relative;z-index:2;flex:0 0 auto;padding-bottom:26px;
-  border-bottom:1px solid var(--line);margin-bottom:24px}
-.hd-top{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-.hd-team{font-family:'IBM Plex Sans Thai';font-weight:700;font-size:30px;
-  letter-spacing:.5px;color:#fff;background:linear-gradient(180deg,#FF7A2E,#E85B12);
-  padding:8px 20px;border-radius:14px;line-height:1;box-shadow:0 8px 22px -10px rgba(255,106,26,.8)}
-.hd-tour{font-size:21px;color:var(--muted);font-weight:500;line-height:1.25}
-.hd-tour b{color:var(--text);font-weight:600}
-.hd-mode{margin-left:auto;font-weight:700;font-size:18px;letter-spacing:1px;
-  padding:9px 18px;border-radius:999px;border:1.5px solid var(--line2);color:var(--muted);text-transform:uppercase}
-.hd-mode.results{color:var(--win);border-color:rgba(52,209,127,.5);background:rgba(52,209,127,.10)}
-.hd-mode.preview{color:var(--orange);border-color:rgba(255,106,26,.5);background:rgba(255,106,26,.10)}
-.hd-title{font-family:'IBM Plex Sans Thai';font-weight:700;
-  font-size:66px;line-height:1.02;letter-spacing:-.5px;color:#fff;margin-bottom:8px}
-.hd-title .accent{color:var(--orange)}
-.hd-date{font-size:30px;color:var(--text);font-weight:600}
-.hd-date .wd{color:var(--orange)}
-.hd-sub{font-size:20px;color:var(--faint);margin-top:4px}
+/* ---- header (segment bar แบบบ้าแบด) ---- */
+.hd{position:relative;z-index:2;flex:0 0 auto;margin-bottom:20px}
+.hd-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.hd-mark{font-weight:700;font-size:18px;letter-spacing:.3px;color:var(--muted);line-height:1.2}
+.hd-mark b{color:var(--orange);font-weight:800;font-size:21px}
+.hd-modepill{font-weight:800;font-size:16px;letter-spacing:2px;text-transform:uppercase;
+  padding:8px 17px;border-radius:9px;color:#0A0D14;white-space:nowrap;
+  box-shadow:0 6px 16px -8px rgba(0,0,0,.7)}
+.hd-modepill.preview{background:linear-gradient(180deg,#FF9248,#E85B12)}
+.hd-modepill.results{background:linear-gradient(180deg,#46DB8B,#15A75E)}
+.hd-bar{display:flex;align-items:stretch;border-radius:15px;overflow:hidden;
+  border:1px solid var(--line2);background:rgba(255,255,255,.035);
+  box-shadow:0 14px 36px -20px rgba(0,0,0,.9)}
+.hd-bar>span{display:flex;align-items:center;font-weight:800;line-height:1.05;white-space:nowrap}
+.bar-title{padding:17px 24px;font-size:30px;color:#fff;letter-spacing:-.3px}
+.bar-title b{color:var(--orange)}
+.bar-date{margin-left:auto;padding:17px 26px;font-size:25px;color:#fff;
+  background:linear-gradient(180deg,var(--maroon),var(--maroon-deep))}
+.bar-start{padding:17px 22px;font-size:22px;color:#FFC074;
+  background:rgba(255,106,26,.12);border-left:1px solid var(--line2)}
+.hd-sub{margin-top:12px;font-size:19px;color:var(--faint);font-weight:600}
+.hd-sub b{color:var(--muted)}
 
-/* ---- body / rows (multi-column: 1 คอลัมน์วันเบา, 2 คอลัมน์วันหนาแน่น) ---- */
-.body{position:relative;z-index:2;flex:1 1 auto;min-height:0;overflow:hidden}
-.rows{column-count:var(--cols,1);column-gap:calc(16px*var(--rs));column-fill:balance}
+/* ---- body / rows (1 คอลัมน์วันเบา, 2 คอลัมน์วันหนาแน่น) ---- */
+.body{position:relative;z-index:2;flex:1 1 auto;min-height:0;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center}
+.rows{column-count:var(--cols,1);column-gap:calc(14px*var(--rs));column-fill:balance}
 .row{
-  break-inside:avoid;-webkit-column-break-inside:avoid;position:relative;overflow:hidden;
-  display:flex;flex-direction:column;gap:calc(8px*var(--rs));
-  background:linear-gradient(180deg,rgba(34,44,58,.72),rgba(26,34,46,.72));
-  border:1px solid var(--line);border-radius:calc(16px*var(--rs));
-  padding:calc(13px*var(--rs)) calc(18px*var(--rs)) calc(13px*var(--rs)) calc(22px*var(--rs));
-  margin-bottom:calc(12px*var(--rs));
+  break-inside:avoid;-webkit-column-break-inside:avoid;position:relative;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:calc(12px*var(--rs));
+  background:linear-gradient(180deg,rgba(30,39,53,.55),rgba(19,26,37,.55));
+  border:1px solid var(--line);border-radius:calc(15px*var(--rs));
+  padding:calc(10px*var(--rs)) calc(12px*var(--rs));margin-bottom:calc(10px*var(--rs));
 }
 .row:last-child{margin-bottom:0}
-.row.kmuttwin{border-color:rgba(52,209,127,.5);
-  background:linear-gradient(180deg,rgba(30,56,44,.82),rgba(22,40,32,.82))}
-.row.kmuttlose{opacity:.92}
+.row.kmuttwin{border-color:rgba(47,191,113,.5);
+  background:linear-gradient(180deg,rgba(25,52,40,.6),rgba(17,35,28,.6))}
+.row.kmuttlose .rmatch{opacity:.9}
 .row.bye{border-style:dashed;border-color:var(--line2)}
-.row::before{content:"";position:absolute;left:0;top:12%;bottom:12%;width:5px;border-radius:0 4px 4px 0;
-  background:var(--orange)}
-.row.kmuttwin::before{background:var(--win)}
-.row.bye::before{background:var(--bye)}
 
-/* head: เวลา | badge ประเภท */
-.r-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.r-time{font-family:'IBM Plex Sans Thai';font-weight:700;
-  font-size:calc(30px*var(--rs));line-height:1;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
-.r-time small{font-size:calc(15px*var(--rs));color:var(--muted);font-weight:500}
-.r-time .bye-lab{font-size:calc(18px*var(--rs));color:var(--bye);font-weight:600}
-.ev{font-family:'IBM Plex Sans Thai';font-weight:700;font-size:calc(18px*var(--rs));
-  color:#fff;background:rgba(255,255,255,.10);border:1px solid var(--line2);
-  padding:calc(5px*var(--rs)) calc(11px*var(--rs));border-radius:calc(9px*var(--rs));white-space:nowrap}
+/* time block (ซ้าย, สีเด่นตามสถานะ) */
+.rblk{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-width:calc(92px*var(--rs));align-self:stretch;padding:calc(6px*var(--rs)) calc(8px*var(--rs));
+  border-radius:calc(11px*var(--rs));color:#fff;
+  background:linear-gradient(180deg,#FF9248,#E85B12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+.rblk .bt{font-weight:800;font-size:calc(30px*var(--rs));line-height:.95;
+  font-variant-numeric:tabular-nums;letter-spacing:-1px}
+.rblk .bu{font-size:calc(12.5px*var(--rs));font-weight:600;opacity:.9;margin-top:calc(2px*var(--rs))}
+.rblk.win{background:linear-gradient(180deg,#46DB8B,#15A75E)}
+.rblk.lose{background:linear-gradient(180deg,#FF7269,#E13931)}
+.rblk.wait{background:linear-gradient(180deg,#F4BC5C,#D98A1E)}
+.rblk.bye{background:linear-gradient(180deg,#8294AB,#566783)}
+.rblk.bye .bt{font-size:calc(21px*var(--rs))}
 
-/* body: ผู้เล่น ม.ซ้าย | VS/score | ผู้เล่น ม.ขวา */
-.r-body{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:calc(10px*var(--rs))}
-.side{display:flex;flex-direction:column;gap:calc(6px*var(--rs));min-width:0}
-.side.k{align-items:flex-end;text-align:right}
-.side.o{align-items:flex-start;text-align:left}
-.nm{font-size:calc(22px*var(--rs));font-weight:600;line-height:1.14;color:var(--text);word-break:break-word}
-.side.dim .nm{color:var(--muted);font-weight:500}
-.side.win .nm{color:#fff;font-weight:700}
-.chip{display:inline-flex;align-items:center;gap:5px;font-size:calc(14px*var(--rs));
-  font-weight:700;line-height:1;color:#fff;padding:calc(4px*var(--rs)) calc(11px*var(--rs));
-  border-radius:999px;letter-spacing:.2px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chip.k{background:linear-gradient(180deg,#FF7A2E,#E85B12);
-  box-shadow:0 4px 12px -5px rgba(255,106,26,.7);border:1px solid rgba(255,180,120,.5)}
-.chip .ck{font-size:calc(13px*var(--rs))}
-.win-tick{color:var(--win);font-weight:800}
+/* match (กลาง: ม.ซ้าย | VS/score | ม.ขวา) */
+.rmatch{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:calc(8px*var(--rs));min-width:0}
+.rside{display:flex;flex-direction:column;gap:calc(5px*var(--rs));min-width:0}
+.rside.k{align-items:flex-end;text-align:right}
+.rside.o{align-items:flex-start;text-align:left}
+.nm{font-size:calc(21px*var(--rs));font-weight:600;line-height:1.12;color:var(--text);word-break:break-word}
+.rside.k .nm{font-weight:700;color:#fff}
+.rside.dim .nm{color:var(--muted);font-weight:500}
+.rside.win .nm{color:#fff;font-weight:800}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:calc(13.5px*var(--rs));font-weight:700;
+  line-height:1;color:#fff;padding:calc(4px*var(--rs)) calc(10px*var(--rs));border-radius:7px;
+  letter-spacing:.2px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+.chip.k{background:linear-gradient(180deg,#FF9248,#E85B12);border:1px solid rgba(255,180,120,.4)}
+.chip .ck{font-size:calc(12px*var(--rs))}
+.win-tick{color:var(--win);font-weight:900;margin-right:2px}
 
-/* center: VS / score / pill */
-.c-mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(3px*var(--rs))}
-.vs{font-family:'IBM Plex Sans Thai';font-weight:700;font-size:calc(20px*var(--rs));
-  color:var(--faint);letter-spacing:1px}
-.score{font-family:'IBM Plex Sans Thai';font-weight:700;font-size:calc(24px*var(--rs));
-  color:#fff;line-height:1.05;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap}
-.pill{font-size:calc(14px*var(--rs));font-weight:700;padding:calc(5px*var(--rs)) calc(12px*var(--rs));
+/* VS / score / pill */
+.rvs{display:flex;align-items:center;justify-content:center;min-width:calc(54px*var(--rs))}
+.vs{font-weight:800;font-style:italic;font-size:calc(25px*var(--rs));letter-spacing:-.5px;color:var(--gold);
+  text-shadow:0 1px 0 #6e480e,0 calc(2px*var(--rs)) calc(5px*var(--rs)) rgba(0,0,0,.55)}
+.vs.bye{color:var(--bye);font-style:normal;font-weight:700}
+.score{font-weight:800;font-size:calc(19px*var(--rs));color:#fff;text-align:center;line-height:1.05;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{font-size:calc(13px*var(--rs));font-weight:800;padding:calc(5px*var(--rs)) calc(11px*var(--rs));
   border-radius:999px;line-height:1;white-space:nowrap}
-.pill.wait{color:var(--wait);background:rgba(224,163,60,.14);border:1px solid rgba(224,163,60,.4)}
-.pill.bye{color:var(--bye);background:rgba(110,141,181,.16);border:1px solid rgba(110,141,181,.45)}
 .pill.win{color:#06140C;background:var(--win)}
 .pill.lose{color:#fff;background:var(--lose)}
+.pill.wait{color:var(--wait);background:rgba(240,169,46,.15);border:1px solid rgba(240,169,46,.45)}
 
-/* foot: คอร์ต · รอบ */
-.r-foot{display:flex;align-items:center;gap:10px;font-size:calc(14px*var(--rs));color:var(--faint);line-height:1.1}
-.r-foot .court b{color:var(--muted);font-weight:600}
-.r-foot .sep{opacity:.5}
+/* tags (ขวา: badge ประเภท + รอบ/คอร์ต) */
+.rtags{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;
+  gap:calc(5px*var(--rs));min-width:calc(60px*var(--rs))}
+.ev{font-weight:800;font-size:calc(16px*var(--rs));color:#fff;letter-spacing:.3px;
+  padding:calc(5px*var(--rs)) calc(10px*var(--rs));border-radius:8px;white-space:nowrap;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 5px 14px -7px rgba(0,0,0,.7)}
+.meta{font-size:calc(12.5px*var(--rs));color:var(--faint);text-align:right;line-height:1.2;white-space:nowrap}
 
 /* empty */
-.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  color:var(--muted);gap:10px;text-align:center}
-.empty .big{font-size:34px;font-weight:700;color:var(--text)}
+.empty{grid-column:1/-1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:var(--muted);gap:10px;text-align:center;padding:60px 0}
+.empty .big{font-size:34px;font-weight:800;color:var(--text)}
 
-/* ---- footer ---- */
-.ft{position:relative;z-index:2;flex:0 0 auto;display:flex;align-items:center;
-  justify-content:space-between;padding:22px 0 26px;margin-top:14px;border-top:1px solid var(--line)}
-.ft-l{display:flex;align-items:center;gap:12px}
-.ft-mark{font-family:'IBM Plex Sans Thai';font-weight:700;font-size:26px;color:#fff}
-.ft-mark span{color:var(--orange)}
-.ft-social{font-size:21px;color:var(--muted);font-weight:500}
-.ft-social b{color:var(--text)}
-.ft-tag{font-size:20px;font-weight:700;color:var(--orange);letter-spacing:.3px}
+/* ---- footer (เชียร์ทีม แบบบ้าแบด) ---- */
+.ft{position:relative;z-index:2;flex:0 0 auto;padding:18px 2px 24px;margin-top:12px;
+  border-top:1px solid var(--line)}
+.ft-cheer{font-weight:800;font-size:29px;color:#fff;letter-spacing:-.3px;margin-bottom:9px}
+.ft-cheer span{color:var(--orange)}
+.ft-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ft-mark{font-weight:800;font-size:19px;color:var(--muted);letter-spacing:.4px}
+.ft-mark b{color:#fff}
+.ft-tag{font-weight:800;font-size:19px;color:var(--orange);letter-spacing:.3px}
 </style>
 </head>
 <body>
@@ -255,15 +265,34 @@ function roundTH(r){ return (r||"")
   .replace("Final","รอบชิงฯ"); }
 function esc(s){ return (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
 
+/* ---------- สีประจำประเภท (ชายคู่/หญิงคู่/คู่ผสม) ---------- */
+function eventColor(ev){
+  const e=(ev||"").toUpperCase();
+  if(e.startsWith("MD")) return "#2D7DD2";   // ชายคู่ — น้ำเงิน
+  if(e.startsWith("WD")) return "#E8478C";   // หญิงคู่ — ชมพู
+  if(e.startsWith("XD")) return "#8B5CF6";   // คู่ผสม — ม่วง
+  if(e.startsWith("MS")) return "#2FA37A";   // ชายเดี่ยว — เขียว
+  if(e.startsWith("WS")) return "#D98324";   // หญิงเดี่ยว — ส้มเข้ม
+  return "#5B6B86";
+}
+
 /* ---------- วันที่ไทย ---------- */
 const THDAY=["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
+const THDAY3=["อา","จ","อ","พ","พฤ","ศ","ส"];
 const THMON=["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
+const THMON3=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
 function dateKey(m){ return (m.iso||"").slice(0,10); }
 function thaiFullDate(d){
   if(!/^\d{4}-\d\d-\d\d$/.test(d)) return d||"";
   const [y,mo,da]=d.split("-").map(Number);
   const wd=new Date(Date.UTC(y,mo-1,da)).getUTCDay();
   return {wd:"วัน"+THDAY[wd], rest:`ที่ ${da} ${THMON[mo-1]} ${y+543}`};
+}
+function thaiShortDate(d){
+  if(!/^\d{4}-\d\d-\d\d$/.test(d)) return d||"";
+  const [y,mo,da]=d.split("-").map(Number);
+  const wd=new Date(Date.UTC(y,mo-1,da)).getUTCDay();
+  return `${THDAY3[wd]} ${da} ${THMON3[mo-1]} ${y+543}`;
 }
 function timeOf(m){ return ((m.th||"")+" "+(m.iso||"")).match(/(\d{1,2}):(\d{2})/); }
 function sortKey(m){
@@ -276,9 +305,9 @@ function sortKey(m){
 function sideHTML(names, sideClass, opts){
   const nm = names.length ? names.map(esc).join("<br>") : "—";
   const chip = opts.chip ? `<span class="chip ${opts.kmutt?'k':''}" ${opts.color?`style="background:${opts.color}"`:''}>${opts.kmutt?'<span class="ck">★</span>':''}${esc(opts.chip)}</span>` : "";
-  const tick = opts.win ? '<span class="win-tick">✔</span> ' : '';
-  return `<div class="side ${sideClass} ${opts.win?'win':''} ${opts.dim?'dim':''}">
-    ${chip}<div class="nm">${opts.win?tick:''}${nm}</div></div>`;
+  const tick = opts.win ? '<span class="win-tick">✔</span>' : '';
+  return `<div class="rside ${sideClass} ${opts.win?'win':''} ${opts.dim?'dim':''}">
+    ${chip}<div class="nm">${tick}${nm}</div></div>`;
 }
 
 function rowHTML(m, mode){
@@ -299,19 +328,19 @@ function rowHTML(m, mode){
   // ฝั่งคู่แข่ง (ขวา)
   let oppSide;
   if(isBye){
-    oppSide = `<div class="side o"><div class="nm" style="color:var(--bye)">ผ่านเข้ารอบ</div></div>`;
+    oppSide = `<div class="rside o"><div class="nm" style="color:var(--bye)">ผ่านเข้ารอบ</div></div>`;
   }else if(isTbd){
-    oppSide = `<div class="side o"><div class="nm" style="color:var(--wait)">รอคู่แข่ง</div></div>`;
+    oppSide = `<div class="rside o"><div class="nm" style="color:var(--wait)">รอคู่แข่ง</div></div>`;
   }else{
     const oWin = isResults && cls==="lose";
     const oDim = isResults && cls==="win";
     oppSide = sideHTML(oppNames, "o", {chip:oppU?oppU.abbr:"", color:oppU?oppU.color:"", win:oWin, dim:oDim});
   }
 
-  // กลาง: VS / score / pill
+  // กลาง: VS ทอง / score / pill
   let mid;
   if(isBye){
-    mid = `<span class="vs" style="color:var(--bye)">→</span>`;
+    mid = `<span class="vs bye">→</span>`;
   }else if(isResults && (cls==="win"||cls==="lose") && m.score){
     mid = `<span class="score">${esc(m.score)}</span>`;
   }else if(isResults && (cls==="win"||cls==="lose")){   // มีผลแล้วแต่ยังไม่กรอกสกอร์
@@ -322,42 +351,49 @@ function rowHTML(m, mode){
     mid = `<span class="vs">VS</span>`;
   }
 
-  // head: เวลา (บายไม่มีเวลาแข่ง) | badge ประเภท
-  const timeHTML = isBye
-    ? `<span class="bye-lab">บาย</span>`
-    : (t ? `${t[1]}:${t[2]}<small> น.</small>` : `<small>ยังไม่กำหนดเวลา</small>`);
+  // time block (ซ้าย) — สีตามสถานะในโหมดผล, สีแบรนด์ในโหมดพรีวิว
+  const blkCls = isBye ? "bye" : (isResults ? cls : "");
+  const blk = isBye
+    ? `<div class="rblk bye"><span class="bt">บาย</span></div>`
+    : `<div class="rblk ${blkCls}">${t
+        ? `<span class="bt">${t[1]}.${t[2]}</span><span class="bu">น.</span>`
+        : `<span class="bt" style="font-size:calc(17px*var(--rs))">TBD</span>`}</div>`;
 
-  // foot: คอร์ต · รอบ (ซ่อน field ที่ว่าง)
-  const footParts = [];
-  if(!isBye && m.court) footParts.push(`<span class="court"><b>คอร์ต</b> ${esc(m.court)}</span>`);
-  if(m.round) footParts.push(`<span class="rnd">${esc(roundTH(m.round))}</span>`);
-  const foot = footParts.length ? `<div class="r-foot">${footParts.join('<span class="sep">·</span>')}</div>` : "";
+  // tags (ขวา): badge ประเภท (สีตามประเภท) + รอบ/คอร์ต (ซ่อนถ้าว่าง)
+  const meta = [];
+  if(m.round) meta.push(esc(roundTH(m.round)));
+  if(!isBye && m.court) meta.push(esc(m.court));
+  const tags = `<div class="rtags">
+     <span class="ev" style="background:${eventColor(m.event)}">${esc(m.event)}</span>
+     ${meta.length?`<span class="meta">${meta.join("<br>")}</span>`:""}
+   </div>`;
 
   const rowCls = kWin ? "kmuttwin" : (kDim ? "kmuttlose" : (isBye ? "bye" : ""));
   return `<div class="row ${rowCls}">
-    <div class="r-head"><span class="r-time">${timeHTML}</span><span class="ev">${esc(m.event)}</span></div>
-    <div class="r-body">${kmuttSide}<div class="c-mid">${mid}</div>${oppSide}</div>
-    ${foot}
+    ${blk}
+    <div class="rmatch">${kmuttSide}<div class="rvs">${mid}</div>${oppSide}</div>
+    ${tags}
   </div>`;
 }
 
 function renderCard(date, mode){
   const matches = DATA.filter(m=>dateKey(m)===date).sort((a,b)=>sortKey(a).localeCompare(sortKey(b)));
-  const df = thaiFullDate(date);
-  const modeLabel = mode==="results" ? "ผลการแข่งขัน" : "โปรแกรมแข่งวันนี้";
-  const titleHTML = mode==="results"
-    ? `<span class="accent">ผล</span>การแข่งขัน`
-    : `แข่ง<span class="accent">วันนี้</span>`;
+  const dShort = thaiShortDate(date);
+  const titleTxt = mode==="results" ? "ผลการแข่งขัน" : "ตารางแข่งวันนี้";
+  const firstT = (matches.map(timeOf).filter(Boolean)
+    .map(x=>x[1].padStart(2,"0")+"."+x[2]).sort()[0]||"").replace(/^0/,"");  // sort เติม 0, โชว์ strip ให้ตรงกับ block ในแถว
 
   const header = `<div class="hd">
-    <div class="hd-top">
-      <span class="hd-team">${esc(KMUTT_NAME)}</span>
-      <span class="hd-tour"><b>มศว เกมส์ 42</b><br>${esc("กีฬาบุคลากรมหาวิทยาลัยฯ ครั้งที่ 42")}</span>
-      <span class="hd-mode ${mode}">${mode}</span>
+    <div class="hd-row">
+      <div class="hd-mark"><b>มศว</b> GAMES 42 · กีฬาบุคลากรมหาวิทยาลัยฯ ครั้งที่ 42</div>
+      <div class="hd-modepill ${mode}">${mode}</div>
     </div>
-    <div class="hd-title">${titleHTML}</div>
-    <div class="hd-date"><span class="wd">${esc(df.wd||"")}</span>${esc(df.rest||date)}</div>
-    <div class="hd-sub">${esc(modeLabel)} · แบดมินตัน · ทีม มจธ.</div>
+    <div class="hd-bar">
+      <span class="bar-title">ทีม <b>มจธ.</b> · ${esc(titleTxt)}</span>
+      <span class="bar-date">${esc(dShort)}</span>
+      ${firstT?`<span class="bar-start">เริ่ม ${esc(firstT)}</span>`:""}
+    </div>
+    <div class="hd-sub">แบดมินตัน · ${matches.length?`<b>${matches.length}</b> แมตช์ของทีม มจธ.`:"ทีม มจธ."}</div>
   </div>`;
 
   const cols = matches.length>8 ? 2 : 1;   // วันหนาแน่น (>8 แมตช์) ใช้ 2 คอลัมน์
@@ -369,11 +405,11 @@ function renderCard(date, mode){
   }
 
   const footer = `<div class="ft">
-    <div class="ft-l">
-      <span class="ft-mark">มจธ.<span>·</span>SWU GAMES 42</span>
-      <span class="ft-social">${esc(SOCIAL_HANDLE)}</span>
+    <div class="ft-cheer">เชียร์ <span>มจธ.</span> ไปกับ <span>${esc(SOCIAL_HANDLE)}</span></div>
+    <div class="ft-row">
+      <span class="ft-mark"><b>มจธ.</b> · มศว เกมส์ 42 · แบดมินตัน</span>
+      <span class="ft-tag">${esc(HASHTAG)}</span>
     </div>
-    <span class="ft-tag">${esc(HASHTAG)}</span>
   </div>`;
 
   document.getElementById("card").innerHTML = header + body + footer;
