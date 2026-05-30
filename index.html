@@ -360,8 +360,9 @@ function matchHTML(m){
   const time=(m.th.match(/\d{1,2}:\d{2}/)||[""])[0];
   let oppBlock,divider;
   if(isBye){divider='บาย';
-    // บายของวันที่ 1 มิ.ย. = รอผลการแข่งรอบก่อนหน้า (วันอื่น = ผ่านเข้ารอบฟรี)
-    const byeText=(m.iso||'').slice(0,10)==='2026-06-01'?'รอผลการแข่งรอบก่อนหน้า':'ผ่านเข้ารอบ (ไม่ต้องแข่ง)';
+    // บายของวันที่ 1-2 มิ.ย. = รอผลการแข่งรอบก่อนหน้า (วันอื่น = ผ่านเข้ารอบฟรี)
+    const byeWaitDays=['2026-06-01','2026-06-02'];
+    const byeText=byeWaitDays.includes((m.iso||'').slice(0,10))?'รอผลการแข่งรอบก่อนหน้า':'ผ่านเข้ารอบ (ไม่ต้องแข่ง)';
     oppBlock=`<div class="side"><div class="who"><div class="nm" style="color:var(--bye)">${byeText}</div></div></div>`;}
   else if(isTbd){divider='พบ';
     oppBlock='<div class="side"><div class="who"><div class="nm" style="color:var(--wait)">รอคู่แข่ง</div><div class="uni">รอผลการแข่งรอบก่อนหน้า</div></div></div>';}
