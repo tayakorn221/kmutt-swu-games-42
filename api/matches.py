@@ -14,25 +14,32 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SHEET_ID = "1f6hoUbGWd4_MRB_UQ4Q1e4ET7h9FR2fmcCmv5-KaYI8"
 SHEET_CSV = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv&gid=0"
 COL_MATCH_ID = 0   # รหัสแมตช์
+COL_RESULT = 12    # ผล (ชนะ/แพ้/บาย) — ผู้ใช้กรอกเองเพื่อ override ผลที่ scrape มา
 COL_SCORE = 13     # สกอร์
 
 
-def read_scores():
-    """ดึงสกอร์ที่กรอกในชีต -> {match_id: score}. ถ้าพลาด คืน {} (ไม่ทำให้ทั้งคำขอล้ม)."""
+def read_sheet():
+    """ดึงค่าที่กรอกในชีต -> (scores, results) ทั้งคู่ keyed ด้วย match_id.
+    ถ้าพลาด คืน ({}, {}) (ไม่ทำให้ทั้งคำขอล้ม)."""
+    scores, results = {}, {}
     try:
         req = urllib.request.Request(SHEET_CSV, headers={"User-Agent": "Mozilla/5.0"})
         raw = urllib.request.urlopen(req, timeout=15).read().decode("utf-8-sig", "replace")
-        scores = {}
-        rows = list(csv.reader(io.StringIO(raw)))
-        for r in rows[1:]:  # ข้าม header
-            if len(r) > COL_SCORE:
-                mid = (r[COL_MATCH_ID] or "").strip()
-                sc = (r[COL_SCORE] or "").strip()
-                if mid and sc:
-                    scores[mid] = sc
-        return scores
+        for r in list(csv.reader(io.StringIO(raw)))[1:]:  # ข้าม header
+            if len(r) <= COL_SCORE:
+                continue
+            mid = (r[COL_MATCH_ID] or "").strip()
+            if not mid:
+                continue
+            sc = (r[COL_SCORE] or "").strip()
+            res = (r[COL_RESULT] or "").strip()
+            if sc:
+                scores[mid] = sc
+            if res:
+                results[mid] = res
     except Exception:
-        return {}
+        pass
+    return scores, results
 
 
 def build_payload():
@@ -41,8 +48,15 @@ def build_payload():
     matches = data.get("matches", [])
     if len(matches) < 10:
         raise RuntimeError(f"scraped too few matches ({len(matches)}) — refusing to serve")
-    scores = read_scores()
-    return to_web(data, scores)
+    scores, results = read_sheet()
+    web = to_web(data, scores)               # merge สกอร์ที่กรอกในชีต (เหมือนเดิม)
+    # ผล (ชนะ/แพ้) ที่กรอกในชีต = override ผลที่ scrape มา (กันกรณีเว็บทางการอัปเดตช้า)
+    # เว้นว่างในชีต = ใช้ผลจาก scrape ตามเดิม · บาย/รอคู่แข่งไม่มี match_id จึงไม่ถูกแตะ
+    for m in web["matches"]:
+        mid = m.get("id")
+        if mid and results.get(mid):
+            m["result"] = results[mid]
+    return web
 
 
 class handler(BaseHTTPRequestHandler):
