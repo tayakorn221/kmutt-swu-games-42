@@ -233,6 +233,14 @@ def _score_for(kmutt_side, opp_side, score_map):
             og = games
     if kg is None or og is None or len(kg) != len(og):
         return ""
+    # sanity check: ฝั่งที่ชนะเกมมากกว่า (จาก kg/og) ต้องตรงกับ winner (จากธง has-won)
+    # ไม่ตรง = markup ต้นทางสลับลำดับ <li> คะแนนกับ row ผู้เล่น -> สกอร์สลับข้าง ทิ้งไปไม่แสดงผิด
+    winner = entry.get("winner")
+    if winner in (kids, oids):
+        kw = sum(a > b for a, b in zip(kg, og))
+        ow = sum(a < b for a, b in zip(kg, og))
+        if (kids if kw > ow else oids) != winner:
+            return ""
     return ", ".join(f"{a}-{b}" for a, b in zip(kg, og))
 
 
