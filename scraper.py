@@ -157,6 +157,97 @@ def conv_date(s):
     return {"th": s.strip(), "iso": iso}
 
 
+def _parse_points(result_html):
+    """<div class='match__result'> ... </div> -> (games_side0, games_side1)
+    แต่ละ <ul class='points'> = 1 เกม มี 2 <li> (ฝั่งบน, ฝั่งล่าง) เรียงตาม match__row."""
+    s0, s1 = [], []
+    for ul in re.findall(r'<ul class="points">(.*?)</ul>', result_html, re.S):
+        cells = re.findall(r'<li class="points__cell[^"]*">\s*(\d+)\s*</li>', ul)
+        if len(cells) >= 2:
+            s0.append(int(cells[0])); s1.append(int(cells[1]))
+    return s0, s1
+
+
+def parse_scores_page(html, out_map):
+    """หน้า Matches/MatchesInDay -> เติม out_map[frozenset(all ids)] =
+    {"sides": [(side_ids, [games]), ...], "winner": frozenset|None} (in-place).
+    ข้ามแมตช์ที่ยังไม่มีผล (ไม่มี points__cell). row ที่ขึ้นต้น 'has-won' = ฝั่งชนะ."""
+    for it in re.split(r'<li class="match-group__item">', html)[1:]:
+        rm = re.search(r'<div class="match__result">(.*?)</div>', it, re.S)
+        if not rm or 'points__cell' not in rm.group(1):
+            continue
+        s0, s1 = _parse_points(rm.group(1))
+        if not s0:
+            continue
+        rows = re.split(r'<div class="match__row ', it[:rm.start()])[1:]
+        if len(rows) < 2:
+            continue
+        s0_ids = frozenset(re.findall(r'data-player-id="(\d+)"', rows[0]))
+        s1_ids = frozenset(re.findall(r'data-player-id="(\d+)"', rows[1]))
+        all_ids = s0_ids | s1_ids
+        if not all_ids:
+            continue
+        winner = s0_ids if rows[0].startswith('has-won') else (
+            s1_ids if rows[1].startswith('has-won') else None)
+        out_map[all_ids] = {"sides": [(s0_ids, s0), (s1_ids, s1)], "winner": winner}
+
+
+def scrape_scores(use_cache=False, max_workers=8, log=lambda *a: None):
+    """ดึงสกอร์จากหน้า Matches ของทัวร์ (ทุกวันแข่ง — หน้านี้มีคอลัมน์ points ที่หน้าโปรไฟล์ผู้เล่นไม่มี).
+    คืน {frozenset(all_ids): {"sides": [(side_ids, [games]), ...], "winner": frozenset|None}}.
+    พลาด = คืน {} (ไม่ทำให้ทั้ง scrape ล้ม)."""
+    score_map = {}
+    try:
+        idx = get(f"{BASE}/tournament/{TID}/Matches", use_cache=use_cache)
+    except Exception as e:
+        log(f"  ! ดึงหน้า Matches ไม่ได้: {e}")
+        return score_map
+    parse_scores_page(idx, score_map)  # หน้าแรก = สกอร์ของวันแรกอยู่แล้ว
+    dates = sorted(set(re.findall(r'MatchesInDay\?date=(\d+)', idx)))
+    urls = [f"{BASE}/tournament/{TID}/Matches/MatchesInDay?date={d}" for d in dates]
+    if urls:
+        with ThreadPoolExecutor(max_workers=max_workers) as ex:
+            futs = {ex.submit(get, u, False, use_cache): u for u in urls}
+            for f in as_completed(futs):
+                try:
+                    parse_scores_page(f.result(), score_map)
+                except Exception as e:
+                    log(f"    ! score page error {futs[f]}: {e}")
+    return score_map
+
+
+def _score_for(kmutt_side, opp_side, score_map):
+    """สกอร์รายเกมของแมตช์ (มุม มจธ.) -> 'มจธ.-คู่แข่ง' ต่อเกม เช่น '21-12, 23-21'. ไม่เจอ = ''."""
+    if not opp_side or not opp_side.get("players"):
+        return ""
+    kids = frozenset(p["id"] for p in kmutt_side["players"])
+    oids = frozenset(p["id"] for p in opp_side["players"])
+    entry = score_map.get(kids | oids)
+    if not entry:
+        return ""
+    kg = og = None
+    for sid, games in entry["sides"]:
+        if sid == kids:
+            kg = games
+        elif sid == oids:
+            og = games
+    if kg is None or og is None or len(kg) != len(og):
+        return ""
+    return ", ".join(f"{a}-{b}" for a, b in zip(kg, og))
+
+
+def _result_for(kmutt_side, opp_side, score_map):
+    """ผลแพ้/ชนะจากหน้า Matches (อัปเดตเร็วกว่า has-won หน้าโปรไฟล์). ไม่รู้ผล = ''."""
+    if not opp_side or not opp_side.get("players"):
+        return ""
+    kids = frozenset(p["id"] for p in kmutt_side["players"])
+    oids = frozenset(p["id"] for p in opp_side["players"])
+    entry = score_map.get(kids | oids)
+    if not entry or not entry.get("winner"):
+        return ""
+    return "ชนะ" if entry["winner"] == kids else "แพ้"
+
+
 def scrape(use_cache=False, max_workers=24, log=lambda *a: None):
     """ขูดทั้งหมด -> dict โครงสร้างเดียวกับ kmutt_data.json."""
     log("ดึงรายชื่อผู้เล่นทั้งหมด...")
@@ -206,6 +297,10 @@ def scrape(use_cache=False, max_workers=24, log=lambda *a: None):
     for pid in KMUTT:
         out["players"].append({"id": pid, "name": players[pid]["name"], "uni": players[pid]["uni"]})
 
+    log("ดึงสกอร์จากหน้า Matches...")
+    score_map = scrape_scores(use_cache=use_cache, max_workers=max_workers, log=log)
+    log(f"  แมตช์ที่มีสกอร์: {len(score_map)}")
+
     KSET = set(KMUTT)
     for k, mt in matches.items():
         sides = mt["sides"]
@@ -230,7 +325,8 @@ def scrape(use_cache=False, max_workers=24, log=lambda *a: None):
             elif opp_side.get("won"):
                 rec["result"] = "แพ้"
             else:
-                rec["result"] = ""
+                # หน้าโปรไฟล์ยังไม่ลงผล -> เดาจากหน้า Matches (has-won) ที่อัปเดตเร็วกว่า
+                rec["result"] = _result_for(kmutt_side, opp_side, score_map)
         elif opp_side and opp_side.get("bye"):
             rec["opponents"] = [{"name": "Bye", "uni": "", "id": ""}]
             rec["result"] = "บาย"
@@ -238,7 +334,7 @@ def scrape(use_cache=False, max_workers=24, log=lambda *a: None):
             rec["opponents"] = [{"name": "รอคู่แข่ง", "uni": "", "id": ""}]
             rec["tbd"] = True
             rec["result"] = ""
-        rec["score"] = ""
+        rec["score"] = _score_for(kmutt_side, opp_side, score_map)
         out["matches"].append(rec)
 
     # จัด "บาย" เข้าวัน ตามวันของแมตช์จริงของคู่เดิม+ประเภทเดิม
