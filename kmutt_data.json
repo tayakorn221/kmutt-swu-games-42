@@ -184,7 +184,7 @@
       "score": "21-11, 19-21, 21-10"
     },
     {
-      "match_id": "3610",
+      "match_id": "",
       "event": "XD35",
       "round": "Round of 64",
       "datetime": {
@@ -215,11 +215,11 @@
           "id": "148"
         }
       ],
-      "result": "",
-      "score": ""
+      "result": "แพ้",
+      "score": "18-21, 16-21"
     },
     {
-      "match_id": "3598",
+      "match_id": "",
       "event": "XD35",
       "round": "Round of 64",
       "datetime": {
@@ -250,18 +250,18 @@
           "id": "192"
         }
       ],
-      "result": "",
-      "score": ""
+      "result": "ชนะ",
+      "score": "21-11, 21-7"
     },
     {
-      "match_id": "2960",
+      "match_id": "",
       "event": "XDทั่วไป",
       "round": "Round of 64",
       "datetime": {
         "th": "อา. 31/5/2569 12:30",
         "iso": "2026-05-31 12:30"
       },
-      "court": "อาคารกีฬา2",
+      "court": "อาคารกีฬา2 - 6",
       "kmutt_players": [
         {
           "name": "DR.MANOVA STEPHENRAJ",
@@ -285,8 +285,8 @@
           "id": "48"
         }
       ],
-      "result": "",
-      "score": ""
+      "result": "แพ้",
+      "score": "21-17, 15-21, 14-21"
     },
     {
       "match_id": "2982",
@@ -924,6 +924,41 @@
           "name": "ดุจฝัน เอี้ยงสุวรรณปัทมะ",
           "uni": "ม.เกษตรศาสตร์",
           "id": "453"
+        }
+      ],
+      "result": "",
+      "score": ""
+    },
+    {
+      "match_id": "3579",
+      "event": "XD35",
+      "round": "Round of 32",
+      "datetime": {
+        "th": "จ. 1/6/2569 18:00",
+        "iso": "2026-06-01 18:00"
+      },
+      "court": "อาคารกีฬา2",
+      "kmutt_players": [
+        {
+          "name": "พิสิษฐ์ วิชานนะ",
+          "id": "154"
+        },
+        {
+          "name": "อรชร กำเนิด",
+          "id": "155"
+        }
+      ],
+      "tbd": false,
+      "opponents": [
+        {
+          "name": "พิศาล คงเอียด",
+          "uni": "มรภ.กาญจนบุรี",
+          "id": "208"
+        },
+        {
+          "name": "กุลธิดา เธียรผาติ",
+          "uni": "มรภ.กาญจนบุรี",
+          "id": "207"
         }
       ],
       "result": "",

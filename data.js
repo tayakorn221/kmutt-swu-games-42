@@ -28,7 +28,7 @@ window.KMUTT_FALLBACK = {
    "tbd": false
   },
   {
-   "id": "3610",
+   "id": "",
    "event": "XD35",
    "round": "Round of 64",
    "th": "อา. 31/5/2569 12:00",
@@ -48,12 +48,12 @@ window.KMUTT_FALLBACK = {
      "uni": "ม.เชียงใหม่"
     }
    ],
-   "result": "",
-   "score": "",
+   "result": "แพ้",
+   "score": "18-21, 16-21",
    "tbd": false
   },
   {
-   "id": "3598",
+   "id": "",
    "event": "XD35",
    "round": "Round of 64",
    "th": "อา. 31/5/2569 12:00",
@@ -73,17 +73,17 @@ window.KMUTT_FALLBACK = {
      "uni": "ม.มหามกุฏราชวิทยาลัย"
     }
    ],
-   "result": "",
-   "score": "",
+   "result": "ชนะ",
+   "score": "21-11, 21-7",
    "tbd": false
   },
   {
-   "id": "2960",
+   "id": "",
    "event": "XDทั่วไป",
    "round": "Round of 64",
    "th": "อา. 31/5/2569 12:30",
    "iso": "2026-05-31 12:30",
-   "court": "อาคารกีฬา2",
+   "court": "อาคารกีฬา2 - 6",
    "kmutt": [
     "DR.MANOVA STEPHENRAJ",
     "ปัณฑ์ณธร สั้นป้อม"
@@ -98,8 +98,8 @@ window.KMUTT_FALLBACK = {
      "uni": "มทร.อีสาน"
     }
    ],
-   "result": "",
-   "score": "",
+   "result": "แพ้",
+   "score": "21-17, 15-21, 14-21",
    "tbd": false
   },
   {
@@ -547,6 +547,31 @@ window.KMUTT_FALLBACK = {
     {
      "name": "ดุจฝัน เอี้ยงสุวรรณปัทมะ",
      "uni": "ม.เกษตรศาสตร์"
+    }
+   ],
+   "result": "",
+   "score": "",
+   "tbd": false
+  },
+  {
+   "id": "3579",
+   "event": "XD35",
+   "round": "Round of 32",
+   "th": "จ. 1/6/2569 18:00",
+   "iso": "2026-06-01 18:00",
+   "court": "อาคารกีฬา2",
+   "kmutt": [
+    "พิสิษฐ์ วิชานนะ",
+    "อรชร กำเนิด"
+   ],
+   "opp": [
+    {
+     "name": "พิศาล คงเอียด",
+     "uni": "มรภ.กาญจนบุรี"
+    },
+    {
+     "name": "กุลธิดา เธียรผาติ",
+     "uni": "มรภ.กาญจนบุรี"
     }
    ],
    "result": "",
