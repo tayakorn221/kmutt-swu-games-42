@@ -71,7 +71,7 @@ body{
 .hd-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 .hd-mark{font-weight:700;font-size:18px;letter-spacing:.3px;color:var(--muted);line-height:1.2}
 .hd-mark b{color:var(--orange);font-weight:800;font-size:21px}
-.hd-modepill{font-weight:800;font-size:16px;letter-spacing:2px;text-transform:uppercase;
+.hd-modepill{font-weight:800;font-size:16px;letter-spacing:.5px;
   padding:8px 17px;border-radius:9px;color:#0A0D14;white-space:nowrap;
   box-shadow:0 6px 16px -8px rgba(0,0,0,.7)}
 .hd-modepill.preview{background:linear-gradient(180deg,#FF9248,#E85B12)}
@@ -282,6 +282,13 @@ function rclass(r){ r=(r||"").trim();
   if(/แพ้|^l$|lose|loss/i.test(r)) return "lose";
   if(/บาย|bye/i.test(r)) return "bye";
   return "wait"; }
+/* แมตช์ "บาย" (ผ่านเข้ารอบ ไม่ได้ลงเล่นจริง) — ซ่อนจากการ์ดสรุปทั้ง 2 โหมด */
+function isByeMatch(m){
+  if(rclass(m.result)==="bye") return true;
+  const oppNames=(m.opp||[]).map(o=>o.name).filter(n=>n && n!=="Bye" && n!=="รอคู่แข่ง");
+  const isTbd=m.tbd || (m.opp||[]).some(o=>o.name==="รอคู่แข่ง");
+  return !isTbd && !oppNames.length;   // ไม่มีคู่แข่งจริง และไม่ใช่ "รอคู่แข่ง" = บาย
+}
 function roundTH(r){ return (r||"")
   .replace("Round of 128","รอบ 128 คู่").replace("Round of 64","รอบ 64 คู่")
   .replace("Round of 32","รอบ 32 คู่").replace("Round of 16","รอบ 16 คู่")
@@ -402,23 +409,28 @@ function rowHTML(m, mode){
 }
 
 function renderCard(date, mode){
-  const matches = DATA.filter(m=>dateKey(m)===date).sort((a,b)=>sortKey(a).localeCompare(sortKey(b)));
+  const matches = DATA.filter(m=>dateKey(m)===date && !isByeMatch(m)).sort((a,b)=>sortKey(a).localeCompare(sortKey(b)));
   const dShort = thaiShortDate(date);
   const titleTxt = mode==="results" ? "ผลการแข่งขัน" : "ตารางแข่งวันนี้";
+  // สรุปผลแพ้-ชนะของวัน (โหมดผล) — เฉพาะแมตช์ที่ตัดสินแล้ว
+  const decided = matches.filter(m=>{const c=rclass(m.result);return c==="win"||c==="lose";});
+  const wins = decided.filter(m=>rclass(m.result)==="win").length;
+  const recordHTML = (mode==="results" && decided.length)
+    ? ` · ชนะ <b style="color:var(--win)">${wins}</b> แพ้ <b style="color:var(--lose)">${decided.length-wins}</b>` : "";
   const firstT = (matches.map(timeOf).filter(Boolean)
     .map(x=>x[1].padStart(2,"0")+"."+x[2]).sort()[0]||"").replace(/^0/,"");  // sort เติม 0, โชว์ strip ให้ตรงกับ block ในแถว
 
   const header = `<div class="hd">
     <div class="hd-row">
       <div class="hd-mark"><b>มศว</b> GAMES 42 · กีฬาบุคลากรมหาวิทยาลัยฯ ครั้งที่ 42</div>
-      <div class="hd-modepill ${mode}">${mode}</div>
+      <div class="hd-modepill ${mode}">${mode==="results"?"ผล":"พรีวิว"}</div>
     </div>
     <div class="hd-bar">
       <span class="bar-title">ทีม <b>มจธ.</b> · ${esc(titleTxt)}</span>
       <span class="bar-date">${esc(dShort)}</span>
       ${firstT?`<span class="bar-start">เริ่ม ${esc(firstT)}</span>`:""}
     </div>
-    <div class="hd-sub">แบดมินตัน · ${matches.length?`<b>${matches.length}</b> แมตช์ของทีม มจธ.`:"ทีม มจธ."}</div>
+    <div class="hd-sub">แบดมินตัน · ${matches.length?`<b>${matches.length}</b> แมตช์ของทีม มจธ.`:"ทีม มจธ."}${recordHTML}</div>
   </div>`;
 
   const cols = matches.length>8 ? 2 : 1;   // วันหนาแน่น (>8 แมตช์) ใช้ 2 คอลัมน์
