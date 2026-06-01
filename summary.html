@@ -144,7 +144,7 @@ body{
 .vs{font-weight:800;font-style:italic;font-size:calc(25px*var(--rs));letter-spacing:-.5px;color:var(--gold);
   text-shadow:0 1px 0 #6e480e,0 calc(2px*var(--rs)) calc(5px*var(--rs)) rgba(0,0,0,.55)}
 .vs.bye{color:var(--bye);font-style:normal;font-weight:700}
-.score{font-weight:800;font-size:calc(21px*var(--rs));color:#fff;text-align:center;line-height:1.1;
+.score{font-weight:800;font-size:calc(21px*var(--rs));color:#fff;text-align:center;line-height:1.25;
   letter-spacing:-.3px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .pill{font-size:calc(13px*var(--rs));font-weight:800;padding:calc(5px*var(--rs)) calc(11px*var(--rs));
   border-radius:999px;line-height:1;white-space:nowrap}
@@ -381,7 +381,8 @@ function rowHTML(m, mode){
   if(isBye){
     mid = `<span class="vs bye">→</span>`;
   }else if(isResults && (cls==="win"||cls==="lose") && m.score){
-    mid = `<span class="score">${esc(m.score)}</span>`;
+    // สกอร์: เรียงแต่ละเกมบนลงล่าง (21-6 / 21-7) ไม่ใช่ต่อกันแนวนอน + แคบลง คืนที่ให้ชื่อ
+    mid = `<span class="score">${m.score.split(",").map(g=>esc(g.trim())).filter(Boolean).join("<br>")}</span>`;
   }else if(isResults && (cls==="win"||cls==="lose")){   // มีผลแล้วแต่ยังไม่กรอกสกอร์
     mid = `<span class="pill ${cls}">${cls==="win"?"ชนะ":"แพ้"}</span>`;
   }else if(isResults && cls==="wait"){
