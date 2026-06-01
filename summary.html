@@ -144,8 +144,8 @@ body{
 .vs{font-weight:800;font-style:italic;font-size:calc(25px*var(--rs));letter-spacing:-.5px;color:var(--gold);
   text-shadow:0 1px 0 #6e480e,0 calc(2px*var(--rs)) calc(5px*var(--rs)) rgba(0,0,0,.55)}
 .vs.bye{color:var(--bye);font-style:normal;font-weight:700}
-.score{font-weight:800;font-size:calc(19px*var(--rs));color:#fff;text-align:center;line-height:1.05;
-  font-variant-numeric:tabular-nums;white-space:nowrap}
+.score{font-weight:800;font-size:calc(21px*var(--rs));color:#fff;text-align:center;line-height:1.1;
+  letter-spacing:-.3px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .pill{font-size:calc(13px*var(--rs));font-weight:800;padding:calc(5px*var(--rs)) calc(11px*var(--rs));
   border-radius:999px;line-height:1;white-space:nowrap}
 .pill.win{color:#06140C;background:var(--win)}
@@ -155,9 +155,9 @@ body{
 /* tags (ขวา: badge ประเภท + รอบ/คอร์ต) */
 .rtags{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;
   gap:calc(5px*var(--rs));min-width:calc(60px*var(--rs))}
-.ev{font-weight:800;font-size:calc(16px*var(--rs));color:#fff;letter-spacing:.3px;
-  padding:calc(5px*var(--rs)) calc(10px*var(--rs));border-radius:8px;white-space:nowrap;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 5px 14px -7px rgba(0,0,0,.7)}
+.ev{font-weight:800;font-size:calc(15px*var(--rs));color:#fff;letter-spacing:.3px;
+  padding:calc(4px*var(--rs)) calc(9px*var(--rs));border-radius:7px;white-space:nowrap;
+  background:rgba(255,255,255,.07);border:1px solid var(--line2)}  /* นิ่ง: สีประเภท = accent ซ้าย (ดู inline) */
 .meta{font-size:calc(12.5px*var(--rs));color:var(--faint);text-align:right;line-height:1.2;white-space:nowrap}
 
 /* empty */
@@ -194,6 +194,7 @@ body{
 #card.light .vs.bye{color:#6E8DB5}
 #card.light .score{color:#1A2230}
 #card.light .meta{color:#8C98AA}
+#card.light .ev{background:#EEF1F6;border-color:#D7DDE8;color:#2A3340}
 #card.light .pill.wait{color:#A86E15;background:rgba(240,169,46,.16);border-color:rgba(240,169,46,.5)}
 </style>
 </head>
@@ -335,8 +336,13 @@ function sortKey(m){
 /* ============================================================
    RENDER — การ์ดเดียว, โหมดต่างกันแค่ result block
    ============================================================ */
+/* ย่อคำนำหน้าตำแหน่งวิชาการ (กันชื่อยาวตีกลับหลายบรรทัด -> การ์ดสูงไม่เท่ากัน) */
+function shortenName(s){ return (s||"")
+  .replace(/ผู้ช่วยศาสตราจารย์/g,"ผศ.").replace(/รองศาสตราจารย์/g,"รศ.")
+  .replace(/ศาสตราจารย์/g,"ศ.").replace(/อาจารย์/g,"อ.")
+  .replace(/\s+/g," ").trim(); }
 function sideHTML(names, sideClass, opts){
-  const nm = names.length ? names.map(esc).join("<br>") : "—";
+  const nm = names.length ? names.map(n=>esc(shortenName(n))).join("<br>") : "—";
   const chip = opts.chip ? `<span class="chip ${opts.kmutt?'k':''}" ${opts.color?`style="background:${opts.color}"`:''}>${opts.kmutt?'<span class="ck">★</span>':''}${esc(opts.chip)}</span>` : "";
   const tick = opts.win ? '<span class="win-tick">✔</span>' : '';
   return `<div class="rside ${sideClass} ${opts.win?'win':''} ${opts.dim?'dim':''}">
@@ -408,7 +414,7 @@ function rowHTML(m, mode){
   if(m.round) meta.push(esc(roundTH(m.round)));
   if(!isBye && m.court) meta.push(esc(m.court));
   const tags = `<div class="rtags">
-     <span class="ev" style="background:${eventColor(m.event)}">${esc(m.event)}</span>
+     <span class="ev" style="border-left:3px solid ${eventColor(m.event)}">${esc(m.event)}</span>
      ${meta.length?`<span class="meta">${meta.join("<br>")}</span>`:""}
    </div>`;
 
@@ -465,15 +471,23 @@ function renderCard(date, mode){
   fitRows();
 }
 
-/* auto-fit: ลด --rs ลงจนแถวพอดีการ์ด (รองรับวันที่มี 16 แมตช์) */
+/* auto-fit + การ์ดทุกใบสูงเท่ากัน:
+   วัดความสูงตามเนื้อหา -> หา "ใบที่สูงสุด" -> เซ็ตทุกใบให้เท่ากัน
+   ถ้ารวมแล้วล้นการ์ด ค่อยลด --rs (ตัวอักษรเล็กลง) แล้ววัดใหม่จนพอดี */
 function fitRows(){
   const card=document.getElementById("card");
   const body=card.querySelector(".body");
   const rows=card.querySelector(".rows");
   if(!rows) return;
-  let rs=1; card.style.setProperty("--rs",rs);
-  for(let i=0;i<16 && rows.scrollHeight>body.clientHeight;i++){
-    rs=Math.max(0.55, rs-0.045); card.style.setProperty("--rs",rs);
+  const items=[...rows.children];
+  let rs=1;
+  for(let i=0;i<18;i++){
+    card.style.setProperty("--rs",rs);
+    items.forEach(r=>{ r.style.height="auto"; });                  // วัดความสูงตามเนื้อหาจริง
+    let maxH=0; items.forEach(r=>{ const h=r.getBoundingClientRect().height; if(h>maxH) maxH=h; });
+    items.forEach(r=>{ r.style.height=Math.ceil(maxH)+"px"; });    // ทุกใบสูง = ใบที่สูงสุด
+    if(rows.scrollHeight<=body.clientHeight || rs<=0.5) break;     // พอดีการ์ดแล้ว
+    rs=Math.max(0.5, rs-0.04);
   }
 }
 
