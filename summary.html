@@ -472,23 +472,28 @@ function renderCard(date, mode){
   fitRows();
 }
 
-/* auto-fit + การ์ดทุกใบสูงเท่ากัน:
-   วัดความสูงตามเนื้อหา -> หา "ใบที่สูงสุด" -> เซ็ตทุกใบให้เท่ากัน
-   ถ้ารวมแล้วล้นการ์ด ค่อยลด --rs (ตัวอักษรเล็กลง) แล้ววัดใหม่จนพอดี */
+/* auto-fit + การ์ดสูงเท่ากัน (มี guard กันตัดแถวเงียบ ๆ วันแมตช์เยอะ):
+   ปกติ: ดันทุกใบสูงเท่ากัน + ย่อ --rs จนพอดีการ์ด
+   guard: ถ้าเท่ากันแล้วย่อจนสุด (rs 0.5) ยังล้น -> ถอยใช้ความสูงตามเนื้อหา
+          (เห็นครบทุกแมตช์ สำคัญกว่าความสูงเท่ากัน) */
 function fitRows(){
   const card=document.getElementById("card");
   const body=card.querySelector(".body");
   const rows=card.querySelector(".rows");
   if(!rows) return;
   const items=[...rows.children];
-  let rs=1;
+  let rs=1, fits=false;
   for(let i=0;i<18;i++){
     card.style.setProperty("--rs",rs);
     items.forEach(r=>{ r.style.height="auto"; });                  // วัดความสูงตามเนื้อหาจริง
-    let maxH=0; items.forEach(r=>{ const h=r.offsetHeight; if(h>maxH) maxH=h; });  // offsetHeight = layout px (ไม่หดตาม transform #stage บนมือถือ — gBCR หด!)
+    let maxH=0; items.forEach(r=>{ const h=r.offsetHeight; if(h>maxH) maxH=h; });  // offsetHeight = layout px (ไม่หดตาม transform #stage)
     items.forEach(r=>{ r.style.height=Math.ceil(maxH)+"px"; });    // ทุกใบสูง = ใบที่สูงสุด
-    if(rows.scrollHeight<=body.clientHeight || rs<=0.5) break;     // พอดีการ์ดแล้ว
+    if(rows.scrollHeight<=body.clientHeight){ fits=true; break; }  // พอดีการ์ดแล้ว
+    if(rs<=0.5) break;
     rs=Math.max(0.5, rs-0.04);
+  }
+  if(!fits){                                                       // guard: เท่ากันแล้วยังล้น
+    items.forEach(r=>{ r.style.height="auto"; });                  //   -> เลิกบังคับสูงเท่ากัน ใช้ความสูงจริง (เห็นครบ)
   }
 }
 
