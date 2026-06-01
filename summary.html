@@ -127,7 +127,10 @@ body{
 .rside{display:flex;flex-direction:column;gap:calc(5px*var(--rs));min-width:0}
 .rside.k{align-items:flex-end;text-align:right}
 .rside.o{align-items:flex-start;text-align:left}
-.nm{font-size:calc(21px*var(--rs));font-weight:600;line-height:1.12;color:var(--text);word-break:break-word}
+.nm{font-size:calc(21px*var(--rs));font-weight:600;line-height:1.18;color:var(--text)}
+.pl{display:block;word-break:break-word}
+.pl+.pl{margin-top:calc(4px*var(--rs))}                   /* ช่องว่างระหว่างผู้เล่น = แยกคนชัด อ่านง่าย */
+.ttl{font-size:.72em;font-weight:600;color:var(--muted)}  /* คำนำหน้า (ผศ./รศ./ดร.) เล็ก-จาง ให้ชื่อจริงเด่น */
 .rside.k .nm{font-weight:700;color:#fff}
 .rside.dim .nm{color:var(--muted);font-weight:500}
 .rside.win .nm{color:#fff;font-weight:800}
@@ -195,6 +198,7 @@ body{
 #card.light .score{color:#1A2230}
 #card.light .meta{color:#8C98AA}
 #card.light .ev{background:#EEF1F6;border-color:#D7DDE8;color:#2A3340}
+#card.light .ttl{color:#8C98AA}
 #card.light .pill.wait{color:#A86E15;background:rgba(240,169,46,.16);border-color:rgba(240,169,46,.5)}
 </style>
 </head>
@@ -341,12 +345,22 @@ function shortenName(s){ return (s||"")
   .replace(/ผู้ช่วยศาสตราจารย์/g,"ผศ.").replace(/รองศาสตราจารย์/g,"รศ.")
   .replace(/ศาสตราจารย์/g,"ศ.").replace(/อาจารย์/g,"อ.")
   .replace(/\s+/g," ").trim(); }
+/* จัดรูปชื่อ: ดึงคำนำหน้า (ผศ./รศ./ศ./อ./ดร./นาย...) มาทำตัวเล็ก-จาง ให้ "ชื่อจริง" เด่น */
+function fmtName(raw){
+  const s = shortenName(raw);
+  const m = s.match(/^((?:ผศ\.|รศ\.|ศ\.|อ\.|ดร\.|นางสาว|นาย|นาง|น\.ส\.)\s*)+/);
+  if(m && s.length > m[0].length)
+    return `<span class="ttl">${esc(m[0].trim())}</span> ${esc(s.slice(m[0].length).trim())}`;
+  return esc(s);
+}
 function sideHTML(names, sideClass, opts){
-  const nm = names.length ? names.map(n=>esc(shortenName(n))).join("<br>") : "—";
+  // แต่ละผู้เล่น = 1 <span class="pl"> (แยกบรรทัดชัด) ✔ ติดที่คนแรกของฝั่งที่ชนะ
+  const players = names.length
+    ? names.map((n,i)=>`<span class="pl">${(i===0&&opts.win)?'<span class="win-tick">✔</span>':''}${fmtName(n)}</span>`).join("")
+    : '<span class="pl">—</span>';
   const chip = opts.chip ? `<span class="chip ${opts.kmutt?'k':''}" ${opts.color?`style="background:${opts.color}"`:''}>${opts.kmutt?'<span class="ck">★</span>':''}${esc(opts.chip)}</span>` : "";
-  const tick = opts.win ? '<span class="win-tick">✔</span>' : '';
   return `<div class="rside ${sideClass} ${opts.win?'win':''} ${opts.dim?'dim':''}">
-    ${chip}<div class="nm">${tick}${nm}</div></div>`;
+    ${chip}<div class="nm">${players}</div></div>`;
 }
 
 function rowHTML(m, mode){
