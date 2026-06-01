@@ -485,7 +485,7 @@ function fitRows(){
   for(let i=0;i<18;i++){
     card.style.setProperty("--rs",rs);
     items.forEach(r=>{ r.style.height="auto"; });                  // วัดความสูงตามเนื้อหาจริง
-    let maxH=0; items.forEach(r=>{ const h=r.getBoundingClientRect().height; if(h>maxH) maxH=h; });
+    let maxH=0; items.forEach(r=>{ const h=r.offsetHeight; if(h>maxH) maxH=h; });  // offsetHeight = layout px (ไม่หดตาม transform #stage บนมือถือ — gBCR หด!)
     items.forEach(r=>{ r.style.height=Math.ceil(maxH)+"px"; });    // ทุกใบสูง = ใบที่สูงสุด
     if(rows.scrollHeight<=body.clientHeight || rs<=0.5) break;     // พอดีการ์ดแล้ว
     rs=Math.max(0.5, rs-0.04);
