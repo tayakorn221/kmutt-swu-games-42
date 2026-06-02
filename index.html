@@ -386,12 +386,17 @@ function matchHTML(m){
       ${m.court?`<span class="court">📍 ${esc(m.court)}</span>`:''}
     </div></div>`;
 }
-function roundTH(r){return (r||"")
-  .replace("Round of 128","รอบ 128 คู่").replace("Round of 64","รอบ 64 คู่")
-  .replace("Round of 32","รอบ 32 คู่").replace("Round of 16","รอบ 16 คู่")
-  .replace("Quarter-final","รอบ 8 คู่").replace("Quarterfinal","รอบ 8 คู่")
-  .replace("Semi-final","รอบรองชนะเลิศ").replace("Semifinal","รอบรองชนะเลิศ")
-  .replace("Final","รอบชิงชนะเลิศ");}
+function roundTH(r){r=(r||"").trim();
+  // รองรับทั้งแบบ "Round of N" (128…2) และชื่อรอบลึก (QF/SF/Final) ทุกสะกด
+  const ro=r.match(/Round\s*of\s*(\d+)/i);
+  if(ro){const n=+ro[1];
+    if(n===2)return"รอบชิงชนะเลิศ"; if(n===4)return"รอบรองชนะเลิศ";
+    return"รอบ "+n+" คู่";}                          // 128/64/32/16/8
+  if(/quarter|^qf$/i.test(r))return"รอบ 8 คู่";
+  if(/semi|^sf$/i.test(r))return"รอบรองชนะเลิศ";
+  if(/grand\s*final|^final$|^f$/i.test(r))return"รอบชิงชนะเลิศ";
+  if(/3rd|third|bronze|play[\s-]*off/i.test(r))return"ชิงอันดับ 3";
+  return r;}                                          // ไม่รู้จัก -> โชว์ดิบ
 /* ตั้งระยะ top ของหัววันที่ให้ติดใต้แถบค้นหา/กรองพอดี (วัดแม่นยำเสมอ) */
 function setCtrlH(){const c=document.querySelector('.controls');
   if(c)document.documentElement.style.setProperty('--ctrl-h',(c.offsetHeight-1)+'px');}
