@@ -214,23 +214,6 @@ footer{margin:40px 0 30px;padding-top:20px;border-top:1px solid var(--line);
       <span id="live" class="live off"><span class="pulse"></span><span id="liveTxt">ข้อมูลตัวอย่าง (ออฟไลน์)</span></span>
       <a class="btn primary" href="summary.html" target="_blank" rel="noopener" style="margin-left:auto;text-decoration:none">🖼️ ทำการ์ดสรุปลงโซเชียล</a>
       <button class="btn" id="refreshBtn">↻ รีเฟรช</button>
-      <button class="btn" id="cfgBtn">⚙ เชื่อม Google Sheet</button>
-    </div>
-    <div class="panel" id="panel">
-      <h3>เชื่อมต่อ Google Sheets</h3>
-      <p>กรอกผลใน Google Sheet แล้วเว็บนี้จะดึงมาแสดงให้อัตโนมัติ — อัปเดตได้หลายคน</p>
-      <ol>
-        <li>เปิด Google Sheets → นำเข้าไฟล์ <b>kmutt_sheet.csv</b> (ไฟล์ → นำเข้า)</li>
-        <li>กดปุ่ม <b>แชร์</b> → "ทุกคนที่มีลิงก์" → สิทธิ์ <b>ผู้มีสิทธิ์ดู</b></li>
-        <li>คัดลอกลิงก์ของ Sheet มาวางด้านล่าง แล้วกดบันทึก</li>
-        <li>เวลาแข่ง: แก้คอลัมน์ <b>ผล</b> (ชนะ/แพ้/บาย) และ <b>สกอร์</b> ใน Sheet ได้เลย</li>
-      </ol>
-      <input id="sheetUrl" type="url" placeholder="วางลิงก์ Google Sheet ที่นี่ (…/spreadsheets/d/…)">
-      <div class="row">
-        <button class="btn primary" id="saveCfg">บันทึก & เชื่อมต่อ</button>
-        <button class="btn" id="clearCfg">ใช้ข้อมูลในเครื่อง</button>
-      </div>
-      <div class="note">เคล็ดลับ: คอลัมน์ <b>ผล</b> ใส่ได้ <b>ชนะ / แพ้ / บาย</b> (เว้นว่าง = ยังไม่แข่ง) · <b>สกอร์</b> เช่น <b>21-15, 21-18</b></div>
     </div>
     <p style="margin-top:16px;font-size:12px">ทำด้วย ♥ สำหรับทีมบุคลากร มจธ. · ข้อมูลโปรแกรมจาก tournamentsoftware.com</p>
   </footer>
@@ -238,43 +221,10 @@ footer{margin:40px 0 30px;padding-top:20px;border-top:1px solid var(--line);
 
 <script src="data.js"></script>
 <script>
-const LS_URL="kmutt_sheet_url";
-const DEFAULT_SHEET_URL="https://docs.google.com/spreadsheets/d/1f6hoUbGWd4_MRB_UQ4Q1e4ET7h9FR2fmcCmv5-KaYI8/edit";
 let DATA=[], FILTER="all", DAYKEY="all";
 const el=id=>document.getElementById(id);
 
-/* ---------- data source ---------- */
-function deriveCsv(input){
-  input=input.trim(); if(!input) return null;
-  if(/output=csv/.test(input)) return input;
-  if(/\/pub/.test(input)){return input+(input.includes("?")?"&":"?")+"output=csv";}
-  const m=input.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
-  if(m){let gid="0";const g=input.match(/[#&?]gid=(\d+)/);if(g)gid=g[1];
-    return `https://docs.google.com/spreadsheets/d/${m[1]}/gviz/tq?tqx=out:csv&gid=${gid}`;}
-  return input;
-}
-function parseCSV(t){
-  const rows=[];let row=[],f="",q=false;
-  for(let i=0;i<t.length;i++){const c=t[i];
-    if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}
-    else{if(c=='"')q=true;else if(c==',')row.push(f),f="";
-      else if(c=='\n'){row.push(f);rows.push(row);row=[];f=""}
-      else if(c=='\r'){}else f+=c}}
-  if(f!==""||row.length)row.push(f),rows.push(row);
-  return rows;
-}
-function fromSheet(csv){
-  const rows=parseCSV(csv).filter(r=>r.length>3&&r.some(x=>x&&x.trim()));
-  rows.shift(); // header
-  return rows.map(r=>{
-    const g=i=>(r[i]||"").trim();
-    const k=[g(7),g(8)].filter(Boolean);
-    const o=[g(9),g(10)].filter(Boolean).map(n=>({name:n,uni:g(11)}));
-    return {id:g(0),event:g(5),round:g(6),th:(g(1)+" "+g(2)).trim(),
-      iso:(g(3)+" "+g(2)).trim(),court:g(4),kmutt:k,opp:o.length?o:[{name:"Bye",uni:""}],
-      result:g(12),score:g(13)};
-  });
-}
+/* ---------- data source: สดจาก /api -> fallback data.js (ฝังในเว็บ) ---------- */
 function fromFallback(){return (window.KMUTT_FALLBACK?.matches||[]).map(m=>({...m}));}
 
 /* ---------- result classification ---------- */
@@ -448,40 +398,20 @@ async function tryApi(fresh){
 }
 async function load(fresh){
   el("list").innerHTML='<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
-  // ① ลองดึงสดจากต้นทางก่อน (Vercel)
+  // ① ดึงสดจากต้นทาง (Vercel serverless)
   if(await tryApi(fresh))return;
-  // ② fallback: Google Sheet
-  const url=localStorage.getItem(LS_URL)||DEFAULT_SHEET_URL;
-  if(url){
-    try{
-      const res=await fetch(deriveCsv(url),{cache:"no-store"});
-      if(!res.ok)throw 0;
-      const txt=await res.text();
-      const ms=fromSheet(txt);
-      if(!ms.length)throw 0;
-      DATA=ms;
-      setLive(true,`เชื่อม Google Sheet · อัปเดต ${hhmm(new Date())}`);
-      render();return;
-    }catch(e){setLive(false,"เชื่อม Sheet ไม่ได้ — แสดงข้อมูลในเครื่อง");}
-  }else setLive(false,"ข้อมูลโปรแกรม (ในเครื่อง)");
-  // ③ fallback: data.js (ฝังในเว็บ)
+  // ② fallback: data.js (ฝังในเว็บ, เปิดออฟไลน์ได้)
+  setLive(false,"ข้อมูลโปรแกรม (ในเครื่อง)");
   DATA=fromFallback();render();
 }
 
 /* ---------- events ---------- */
 el("q").addEventListener("input",render);
 el("refreshBtn").onclick=()=>load(true);
-el("cfgBtn").onclick=()=>el("panel").classList.toggle("open");
-el("sheetUrl").value=localStorage.getItem(LS_URL)||DEFAULT_SHEET_URL;
-el("saveCfg").onclick=()=>{const v=el("sheetUrl").value.trim();
-  if(v)localStorage.setItem(LS_URL,v);else localStorage.removeItem(LS_URL);
-  el("panel").classList.remove("open");load();};
-el("clearCfg").onclick=()=>{localStorage.removeItem(LS_URL);el("sheetUrl").value=DEFAULT_SHEET_URL;
-  el("panel").classList.remove("open");load();};
 
 load();
-// auto-refresh ทุก 3 นาที เมื่อเชื่อม Sheet
-setInterval(()=>{if(localStorage.getItem(LS_URL)||DEFAULT_SHEET_URL)load();},180000);
+// auto-refresh ทุก 3 นาที (ดึงสดจาก /api)
+setInterval(()=>load(),180000);
 </script>
 </body>
 </html>
