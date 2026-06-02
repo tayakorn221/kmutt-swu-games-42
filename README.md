@@ -137,4 +137,12 @@ python build_excel.py       # สร้าง Excel ใหม่
 
 ---
 
+## 👤 ผู้จัดทำ
+
+**ออกแบบ & พัฒนาโดย [Tayakorn](https://github.com/tayakorn221)**
+
+📧 [tayakorn2212@gmail.com](mailto:tayakorn2212@gmail.com)  ·  💻 [github.com/tayakorn221](https://github.com/tayakorn221)
+
+---
+
 *ทำเพื่อทีมบุคลากร มจธ. · ไม่เกี่ยวข้องอย่างเป็นทางการกับผู้จัดการแข่งขันหรือ tournamentsoftware.com*
