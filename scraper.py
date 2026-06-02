@@ -257,15 +257,26 @@ def _result_for(kmutt_side, opp_side, score_map):
 
 
 def drop_redundant_byes(matches):
-    """เอา 'บาย' ที่ซ้ำซ้อนออก: ถ้าคู่เดิม (เทียบด้วย id ผู้เล่น) มีแมตช์จริง (ไม่ใช่บาย)
-    ใน event เดียวกันแล้ว บายรอบแรกนั้นเป็นแค่การ์ดซ้ำ ไม่ได้ให้ข้อมูลเพิ่ม -> เอาออก.
-    บายที่คู่นั้น 'มีแต่บาย' (ยังไม่มีแมตช์จริง) จะถูกเก็บไว้ (โชว์ว่าผ่านเข้ารอบ/รอสาย).
-    คืน list ใหม่ โดยคงลำดับเดิม."""
+    """เอา 'บาย' ซ้ำซ้อนของ 'วันหลัง' ออก: ถ้าคู่เดิม (เทียบด้วย id ผู้เล่น) มีแมตช์จริง
+    (ไม่ใช่บาย) ใน event เดียวกันแล้ว บายรอบแรกเป็นแค่การ์ดซ้ำ -> เอาออก.
+    ยกเว้น 2 กรณีที่เก็บไว้เสมอ:
+      1) บายของ 'วันแรกของทัวร์' (วันที่น้อยสุด) — เป็นภาพเปิดสนาม ควรโชว์
+      2) บายที่คู่นั้น 'มีแต่บาย' (ยังไม่มีแมตช์จริง) — ยังให้ข้อมูลว่าผ่านเข้ารอบ
+    *ต้องเรียกหลังเติมวันให้บายแล้ว (bye day inference). คืน list ใหม่ คงลำดับเดิม."""
     def kids(m):
         return frozenset(p["id"] for p in m.get("kmutt_players", []))
+    days = [m["datetime"]["iso"][:10] for m in matches if m.get("datetime", {}).get("iso")]
+    first_day = min(days) if days else None
     real = {(m["event"], kids(m)) for m in matches if m.get("result") != "บาย"}
-    return [m for m in matches
-            if m.get("result") != "บาย" or (m["event"], kids(m)) not in real]
+    keep = []
+    for m in matches:
+        if m.get("result") != "บาย":
+            keep.append(m)
+            continue
+        day = (m.get("datetime", {}).get("iso") or "")[:10]
+        if day == first_day or (m["event"], kids(m)) not in real:
+            keep.append(m)   # วันแรก หรือ คู่มีแต่บาย -> เก็บ
+    return keep
 
 
 def scrape(use_cache=False, max_workers=24, log=lambda *a: None):
@@ -357,7 +368,24 @@ def scrape(use_cache=False, max_workers=24, log=lambda *a: None):
         rec["score"] = _score_for(kmutt_side, opp_side, score_map)
         out["matches"].append(rec)
 
-    # เอา "บาย" ที่ซ้ำซ้อนออก (คู่เดิมมีแมตช์จริงใน event เดียวกันแล้ว = บายเป็นแค่การ์ดซ้ำ)
+    # จัด "บาย" เข้าวัน ตามวันของแมตช์จริงของคู่เดิม+ประเภทเดิม (ให้บายโผล่ในวันที่ถูก)
+    dated_day = {}
+    for m in out["matches"]:
+        if m["datetime"]["iso"] and m["result"] != "บาย":
+            key = (m["event"], frozenset(p["name"] for p in m["kmutt_players"]))
+            iso = m["datetime"]["iso"][:10]
+            th = m["datetime"]["th"].rsplit(" ", 1)[0] if " " in m["datetime"]["th"] else m["datetime"]["th"]
+            if key not in dated_day or iso < dated_day[key][0]:
+                dated_day[key] = (iso, th)
+    for m in out["matches"]:
+        if m["result"] == "บาย" and not m["datetime"]["iso"]:
+            key = (m["event"], frozenset(p["name"] for p in m["kmutt_players"]))
+            if key in dated_day:
+                m["datetime"]["iso"] = dated_day[key][0]
+                m["datetime"]["th"] = dated_day[key][1]
+                m["bye_day_inferred"] = True
+
+    # เอา "บาย" ซ้ำซ้อนของวันหลังออก (วันแรกเก็บไว้โชว์)
     out["matches"] = drop_redundant_byes(out["matches"])
 
     def _skey(r):

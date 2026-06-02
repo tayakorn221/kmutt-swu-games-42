@@ -254,6 +254,132 @@ window.KMUTT_FALLBACK = {
   },
   {
    "id": "",
+   "event": "MDทั่วไป",
+   "round": "Round of 128",
+   "th": "อา. 31/5/2569",
+   "iso": "2026-05-31",
+   "court": "",
+   "kmutt": [
+    "DR.MANOVA STEPHENRAJ",
+    "ธีรภัทร เขษมเวสารัชวุฒิ"
+   ],
+   "opp": [
+    {
+     "name": "Bye",
+     "uni": ""
+    }
+   ],
+   "result": "บาย",
+   "score": "",
+   "tbd": false
+  },
+  {
+   "id": "",
+   "event": "MDทั่วไป",
+   "round": "Round of 128",
+   "th": "อา. 31/5/2569",
+   "iso": "2026-05-31",
+   "court": "",
+   "kmutt": [
+    "ทยากร มหกรเพชร",
+    "ผศ.ดร. อธิป ดุลย์จินดาชบาพร"
+   ],
+   "opp": [
+    {
+     "name": "Bye",
+     "uni": ""
+    }
+   ],
+   "result": "บาย",
+   "score": "",
+   "tbd": false
+  },
+  {
+   "id": "",
+   "event": "XD40",
+   "round": "Round of 128",
+   "th": "อา. 31/5/2569",
+   "iso": "2026-05-31",
+   "court": "",
+   "kmutt": [
+    "วรทัศน์ บุญไข่",
+    "ดร. ปริยาภัทร นิลสลับ"
+   ],
+   "opp": [
+    {
+     "name": "Bye",
+     "uni": ""
+    }
+   ],
+   "result": "บาย",
+   "score": "",
+   "tbd": false
+  },
+  {
+   "id": "",
+   "event": "XD40",
+   "round": "Round of 128",
+   "th": "อา. 31/5/2569",
+   "iso": "2026-05-31",
+   "court": "",
+   "kmutt": [
+    "รศ.ดร. อธิปัตย์ บุญเหมาะ",
+    "นิชาพร ยอดมณี"
+   ],
+   "opp": [
+    {
+     "name": "Bye",
+     "uni": ""
+    }
+   ],
+   "result": "บาย",
+   "score": "",
+   "tbd": false
+  },
+  {
+   "id": "",
+   "event": "XDทั่วไป",
+   "round": "Round of 128",
+   "th": "อา. 31/5/2569",
+   "iso": "2026-05-31",
+   "court": "",
+   "kmutt": [
+    "DR.MANOVA STEPHENRAJ",
+    "ปัณฑ์ณธร สั้นป้อม"
+   ],
+   "opp": [
+    {
+     "name": "Bye",
+     "uni": ""
+    }
+   ],
+   "result": "บาย",
+   "score": "",
+   "tbd": false
+  },
+  {
+   "id": "",
+   "event": "XDทั่วไป",
+   "round": "Round of 128",
+   "th": "อา. 31/5/2569",
+   "iso": "2026-05-31",
+   "court": "",
+   "kmutt": [
+    "ธีรภัทร เขษมเวสารัชวุฒิ",
+    "ดร.สุณิสา สถาพรวจนา"
+   ],
+   "opp": [
+    {
+     "name": "Bye",
+     "uni": ""
+    }
+   ],
+   "result": "บาย",
+   "score": "",
+   "tbd": false
+  },
+  {
+   "id": "",
    "event": "MD40",
    "round": "Round of 64",
    "th": "จ. 1/6/2569 10:30",
@@ -653,12 +779,12 @@ window.KMUTT_FALLBACK = {
    "tbd": false
   },
   {
-   "id": "6021",
+   "id": "",
    "event": "XD45",
    "round": "Round of 16",
    "th": "อ. 2/6/2569 11:00",
    "iso": "2026-06-02 11:00",
-   "court": "อาคารกีฬา2",
+   "court": "อาคารกีฬา2 - 8",
    "kmutt": [
     "สัญญา คงทอง",
     "มัทนพรรณ จิ๋วเจียม"
@@ -673,17 +799,17 @@ window.KMUTT_FALLBACK = {
      "uni": "ม.ธรรมศาสตร์"
     }
    ],
-   "result": "",
-   "score": "",
+   "result": "ชนะ",
+   "score": "21-9, 21-8",
    "tbd": false
   },
   {
-   "id": "3570",
+   "id": "",
    "event": "XD35",
    "round": "Round of 16",
    "th": "อ. 2/6/2569 11:30",
    "iso": "2026-06-02 11:30",
-   "court": "อาคารกีฬา2",
+   "court": "อาคารกีฬา2 - 3",
    "kmutt": [
     "พิสิษฐ์ วิชานนะ",
     "อรชร กำเนิด"
@@ -698,8 +824,8 @@ window.KMUTT_FALLBACK = {
      "uni": "จุฬาฯ"
     }
    ],
-   "result": "",
-   "score": "",
+   "result": "แพ้",
+   "score": "7-21, 5-21",
    "tbd": false
   },
   {
@@ -996,6 +1122,31 @@ window.KMUTT_FALLBACK = {
     {
      "name": "พัชรบูรณ์ เนียมสุวรรณ",
      "uni": "ม.ศรีนครินทรวิโรฒ"
+    }
+   ],
+   "result": "",
+   "score": "",
+   "tbd": false
+  },
+  {
+   "id": "",
+   "event": "XD45",
+   "round": "Quarter final",
+   "th": "",
+   "iso": "",
+   "court": "",
+   "kmutt": [
+    "สัญญา คงทอง",
+    "มัทนพรรณ จิ๋วเจียม"
+   ],
+   "opp": [
+    {
+     "name": "องอาจ เพียงโคกกรวด",
+     "uni": "ม.เทคโนโลยีสุรนารี"
+    },
+    {
+     "name": "ศศิรชา ชัยชมภู",
+     "uni": "ม.เทคโนโลยีสุรนารี"
     }
    ],
    "result": "",
