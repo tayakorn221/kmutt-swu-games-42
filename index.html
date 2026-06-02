@@ -156,6 +156,14 @@ header{padding:clamp(20px,5vw,38px) 0 14px}
 footer{margin:40px 0 30px;padding-top:20px;border-top:1px solid var(--line);
   color:var(--ink-soft);font-size:13px}
 .src{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.byline{margin-top:10px;font-size:12px;color:var(--ink-soft);
+  display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.byline .me{font-family:'Bai Jamjuree';font-weight:600;color:var(--orange-deep)}
+.byline .sep{color:var(--orange)}
+.byline a{color:var(--ink-soft);text-decoration:none;
+  display:inline-flex;align-items:center;gap:4px;transition:color .15s}
+.byline a:hover{color:var(--orange-deep)}
+.byline a svg{width:13px;height:13px;flex:none}
 .live{display:inline-flex;align-items:center;gap:6px;font-weight:600;
   color:var(--win);font-family:'Bai Jamjuree';font-size:12.5px}
 .live .pulse{width:8px;height:8px;border-radius:50%;background:var(--win);
@@ -216,6 +224,15 @@ footer{margin:40px 0 30px;padding-top:20px;border-top:1px solid var(--line);
       <button class="btn" id="refreshBtn">↻ รีเฟรช</button>
     </div>
     <p style="margin-top:16px;font-size:12px">ทำด้วย ♥ สำหรับทีมบุคลากร มจธ. · ข้อมูลโปรแกรมจาก tournamentsoftware.com</p>
+    <p class="byline">
+      <span>ออกแบบ &amp; พัฒนาโดย <span class="me">Tayakorn</span></span>
+      <span class="sep">·</span>
+      <a href="mailto:tayakorn2212@gmail.com" aria-label="อีเมลถึง Tayakorn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>อีเมล</a>
+      <span class="sep">·</span>
+      <a href="https://github.com/tayakorn221" target="_blank" rel="noopener" aria-label="GitHub ของ Tayakorn">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6 0-.3 0-1 0-2-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C18.6 4.8 19.6 5.1 19.6 5.1c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.8 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2 0 1.6 0 2.9 0 3.3 0 .3.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg>GitHub</a>
+    </p>
   </footer>
 </div>
 
