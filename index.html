@@ -42,7 +42,7 @@ header{padding:clamp(20px,5vw,38px) 0 14px}
 
 /* ---- scoreboard ---- */
 .board{
-  display:grid;grid-template-columns:repeat(5,1fr);gap:1px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
   background:var(--line);border:1px solid var(--line);border-radius:16px;
   overflow:hidden;margin-top:22px;box-shadow:var(--shadow)}
 .board .cell{background:var(--card);padding:14px 8px 12px;text-align:center}
@@ -182,7 +182,7 @@ footer{margin:40px 0 30px;padding-top:20px;border-top:1px solid var(--line);
 .row{display:flex;gap:8px;flex-wrap:wrap}
 .note{font-size:12px;color:var(--ink-soft);margin-top:9px}
 @media(max-width:430px){
-  .board{grid-template-columns:repeat(5,1fr)}
+  .board{grid-template-columns:repeat(4,1fr)}
   .board .lab{font-size:10px}
   .m-when{width:100%;margin-left:0;order:3}
 }
@@ -318,7 +318,7 @@ function renderBoard(){
   const c=compute();   // สกอร์บอร์ด = ภาพรวมทั้งทัวร์นาเมนต์เสมอ
   el("board").innerHTML=[
     ["",c.total,"แมตช์"],["c-win",c.win,"ชนะ"],["c-lose",c.lose,"แพ้"],
-    ["c-bye",c.bye,"บาย"],["c-wait",c.wait,"รอแข่ง"]
+    ["c-wait",c.wait,"รอแข่ง"]
   ].map(([cl,n,l])=>`<div class="cell ${cl}"><div class="num">${n}</div><div class="lab">${l}</div></div>`).join("");
 }
 function renderDayTabs(){
@@ -340,7 +340,7 @@ function renderDayTabs(){
 function renderChips(){
   const c=compute(dayScoped());   // ชิปผล = นับเฉพาะวันที่เลือก
   const opts=[["all","ทั้งหมด",c.total],["wait","รอแข่ง",c.wait],
-    ["win","ชนะ",c.win],["lose","แพ้",c.lose],["bye","บาย",c.bye]];
+    ["win","ชนะ",c.win],["lose","แพ้",c.lose]];
   el("chips").innerHTML=opts.map(([k,l,n])=>
     `<button class="chip ${FILTER==k?'on':''}" data-f="${k}">${l}<span class="ct">${n}</span></button>`).join("");
   el("chips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{FILTER=b.dataset.f;render()});
