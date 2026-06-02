@@ -177,10 +177,12 @@ body{
 .ft-mark{font-weight:800;font-size:19px;color:var(--muted);letter-spacing:.4px}
 .ft-mark b{color:#fff}
 .ft-tag{font-weight:800;font-size:19px;color:var(--orange);letter-spacing:.3px}
+.ft-by{margin-top:11px;font-size:15px;color:var(--faint);font-weight:600;letter-spacing:.2px}
+.ft-by b{color:var(--muted)}
 
 /* ฟอนต์ display หัว/เลข/badge = Bai Jamjuree (ฝัง base64), ชื่อผู้เล่นคง Plex เพื่ออ่านง่าย */
 .bar-title,.bar-date,.bar-start,.hd-modepill,.hd-mark b,
-.rblk .bt,.vs,.score,.ev,.ft-cheer,.ft-mark,.ft-tag{
+.rblk .bt,.vs,.score,.ev,.ft-cheer,.ft-mark,.ft-tag,.ft-by{
   font-family:'Bai Jamjuree','IBM Plex Sans Thai',sans-serif;
 }
 
@@ -484,6 +486,7 @@ function renderCard(date, mode){
       <span class="ft-mark"><b>มจธ.</b> · มศว เกมส์ 42 · แบดมินตัน</span>
       <span class="ft-tag">${esc(HASHTAG)}</span>
     </div>
+    <div class="ft-by">ออกแบบ &amp; พัฒนาโดย <b>Tayakorn</b> · github.com/tayakorn221</div>
   </div>`;
 
   document.getElementById("card").innerHTML = header + body + footer;
