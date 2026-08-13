@@ -8,6 +8,7 @@ window.KMUTT_FALLBACK = {
  "social": "KMUTT Badminton",
  "hashtag": "#มจธ #มศวเกมส์42",
  "archived": true,
+ "archivedOn": "13 ส.ค. 2569",
  "matches": [
   {
    "id": "",

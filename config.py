@@ -39,6 +39,7 @@ HASHTAG = "#มจธ #มศวเกมส์42"
 # True  = แข่งจบแล้ว เว็บอ่านผลจาก data.js อย่างเดียว (ไม่เรียก /api)
 # False = กำลังแข่ง เว็บดึงสดจาก /api/matches ทุก 3 นาที + มีปุ่มรีเฟรช
 ARCHIVED = True
+ARCHIVED_ON = "13 ส.ค. 2569"   # วันที่ขูดผลจบครั้งสุดท้าย (โชว์ท้ายเว็บ) — ว่างไว้ได้ถ้าไม่อยากโชว์
 
 # ---------- ชื่อไฟล์ผลลัพธ์ ----------
 DATA_JSON = "kmutt_data.json"
@@ -58,4 +59,5 @@ def web_meta():
         "social": SOCIAL_HANDLE,
         "hashtag": HASHTAG,
         "archived": ARCHIVED,
+        "archivedOn": ARCHIVED_ON,
     }

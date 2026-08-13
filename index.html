@@ -222,7 +222,7 @@ footer{margin:40px 0 30px;padding-top:20px;border-top:1px solid var(--line);
       <span id="live" class="live off"><span class="pulse"></span><span id="liveTxt">จบการแข่งขันแล้ว · ผลครบทุกแมตช์</span></span>
       <a class="btn primary" href="summary.html" target="_blank" rel="noopener" style="margin-left:auto;text-decoration:none">🖼️ ทำการ์ดสรุปลงโซเชียล</a>
     </div>
-    <p id="footNote" style="margin-top:16px;font-size:12px">ทำด้วย ♥ สำหรับทีมบุคลากร มจธ. · ข้อมูลผลการแข่งขันจาก tournamentsoftware.com (บันทึกไว้เมื่อ 5 ส.ค. 2569 หลังจบการแข่งขัน)</p>
+    <p id="footNote" style="margin-top:16px;font-size:12px">ทำด้วย ♥ สำหรับทีมบุคลากร มจธ. · ข้อมูลผลการแข่งขันจาก tournamentsoftware.com (บันทึกไว้เมื่อ 13 ส.ค. 2569 หลังจบการแข่งขัน)</p>
     <p class="byline">
       <span>ออกแบบ &amp; พัฒนาโดย <span class="me">Tayakorn</span></span>
       <span class="sep">·</span>
@@ -422,8 +422,9 @@ function applyMeta(){
   const parts=[series,META.venue,dateRange()].filter(Boolean).map(esc);
   if(parts.length)el("subtitle").innerHTML=parts.join(`${dot} `);
   document.title=`${TEAM} · ${META.tournamentShort||""} — ติดตามผล${META.sport||""}`.replace(/\s+/g," ");
+  const when=META.archivedOn?`เมื่อ ${esc(META.archivedOn)} `:"";
   el("footNote").innerHTML=`ทำด้วย ♥ สำหรับทีมบุคลากร ${esc(TEAM)} · ข้อมูลผลการแข่งขันจาก tournamentsoftware.com`
-    +(META.archived?" (บันทึกไว้หลังจบการแข่งขัน)":"");
+    +(META.archived?` (บันทึกไว้${when}หลังจบการแข่งขัน)`:"");
 }
 
 // โหมด archive: การแข่งขันจบแล้ว อ่านผลชุดสมบูรณ์จาก data.js อย่างเดียว
