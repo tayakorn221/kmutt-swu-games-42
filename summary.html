@@ -276,12 +276,9 @@ function uniStyle(uni){
    ============================================================ */
 let DATA = [];
 function fromFallback(){ return (window.KMUTT_FALLBACK?.matches||[]).map(m=>({...m})); }
+// โหมด archive: อ่านผลชุดสมบูรณ์จาก data.js อย่างเดียว (เดิมดึงสดจาก /api/matches ตอนแข่ง)
 async function loadData(){
-  try{
-    const r=await fetch("/api/matches",{cache:"no-store"});
-    if(r.ok){ const j=await r.json(); if(j&&Array.isArray(j.matches)&&j.matches.length){ return j.matches.map(m=>({...m})); } }
-  }catch(e){}
-  return fromFallback();           // fallback: data.js ฝังในเว็บ (ทำงาน offline ได้)
+  return fromFallback();
 }
 
 /* ---------- ตัวจำแนกผล (logic เดียวกับหน้าเว็บหลัก) ---------- */

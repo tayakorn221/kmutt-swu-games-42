@@ -219,11 +219,10 @@ footer{margin:40px 0 30px;padding-top:20px;border-top:1px solid var(--line);
 
   <footer>
     <div class="src">
-      <span id="live" class="live off"><span class="pulse"></span><span id="liveTxt">ข้อมูลตัวอย่าง (ออฟไลน์)</span></span>
+      <span id="live" class="live off"><span class="pulse"></span><span id="liveTxt">จบการแข่งขันแล้ว · ผลครบทุกแมตช์</span></span>
       <a class="btn primary" href="summary.html" target="_blank" rel="noopener" style="margin-left:auto;text-decoration:none">🖼️ ทำการ์ดสรุปลงโซเชียล</a>
-      <button class="btn" id="refreshBtn">↻ รีเฟรช</button>
     </div>
-    <p style="margin-top:16px;font-size:12px">ทำด้วย ♥ สำหรับทีมบุคลากร มจธ. · ข้อมูลโปรแกรมจาก tournamentsoftware.com</p>
+    <p style="margin-top:16px;font-size:12px">ทำด้วย ♥ สำหรับทีมบุคลากร มจธ. · ข้อมูลผลการแข่งขันจาก tournamentsoftware.com (บันทึกไว้เมื่อ 5 ส.ค. 2569 หลังจบการแข่งขัน)</p>
     <p class="byline">
       <span>ออกแบบ &amp; พัฒนาโดย <span class="me">Tayakorn</span></span>
       <span class="sep">·</span>
@@ -400,35 +399,17 @@ function render(){
 /* ---------- load ---------- */
 function setLive(on,txt){const l=el("live");l.className="live"+(on?"":" off");
   el("liveTxt").textContent=txt;}
-function hhmm(t){return `${t.getHours()}:${String(t.getMinutes()).padStart(2,"0")}`;}
-// ① ข้อมูลสดจากต้นทาง ผ่าน serverless /api/matches (มีเฉพาะตอน deploy บน Vercel)
-async function tryApi(fresh){
-  try{
-    const res=await fetch("/api/matches"+(fresh?"?fresh=1":""),{cache:"no-store"});
-    if(!res.ok)throw 0;
-    const j=await res.json();
-    if(!j||!Array.isArray(j.matches)||!j.matches.length)throw 0;
-    DATA=j.matches.map(m=>({...m}));
-    setLive(true,`ข้อมูลสดจากต้นทาง · อัปเดต ${hhmm(new Date())}`);
-    render();return true;
-  }catch(e){return false;}
-}
-async function load(fresh){
-  el("list").innerHTML='<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
-  // ① ดึงสดจากต้นทาง (Vercel serverless)
-  if(await tryApi(fresh))return;
-  // ② fallback: data.js (ฝังในเว็บ, เปิดออฟไลน์ได้)
-  setLive(false,"ข้อมูลโปรแกรม (ในเครื่อง)");
+// โหมด archive: การแข่งขันจบแล้ว อ่านผลชุดสมบูรณ์จาก data.js อย่างเดียว
+// (เดิมดึงสดจาก /api/matches ตอนแข่ง — ตัดออกแล้วเพื่อไม่ให้ผลเปลี่ยนตามต้นทาง)
+function load(){
+  setLive(false,"จบการแข่งขันแล้ว · ผลครบทุกแมตช์");
   DATA=fromFallback();render();
 }
 
 /* ---------- events ---------- */
 el("q").addEventListener("input",render);
-el("refreshBtn").onclick=()=>load(true);
 
 load();
-// auto-refresh ทุก 3 นาที (ดึงสดจาก /api)
-setInterval(()=>load(),180000);
 </script>
 </body>
 </html>
