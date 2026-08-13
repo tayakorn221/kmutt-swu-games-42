@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-"""สร้างไฟล์ Excel เต็มจาก kmutt_data.json"""
+"""สร้างไฟล์ Excel เต็มจากข้อมูลที่ขูดมา (ชื่องาน/ทีม/ไฟล์ ตั้งใน config.py)"""
 import json
+import config
 from collections import defaultdict
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 
-data = json.load(open("kmutt_data.json", encoding="utf-8"))
+data = json.load(open(config.DATA_JSON, encoding="utf-8"))
+T = config.TEAM_LABEL
 
-ORANGE = "F47B20"   # สีส้ม มจธ.
+ORANGE = "F47B20"   # สีหัวตาราง (ส้ม มจธ.)
 HEADFILL = PatternFill("solid", fgColor=ORANGE)
 WHITEB = Font(bold=True, color="FFFFFF", name="TH Sarabun New", size=14)
 CELL = Font(name="TH Sarabun New", size=14)
@@ -38,7 +40,7 @@ def pj(lst, sep=" / "):
 # ---------- Sheet 1: ตารางแมตช์ ----------
 ws = wb.active
 ws.title = "ตารางแมตช์"
-cols = ["วันเวลา", "ประเภท", "รอบ", "คอร์ท", "นักกีฬา มจธ.", "คู่แข่ง", "สังกัดคู่แข่ง", "ผล", "สกอร์"]
+cols = ["วันเวลา", "ประเภท", "รอบ", "คอร์ท", f"นักกีฬา {T}", "คู่แข่ง", "สังกัดคู่แข่ง", "ผล", "สกอร์"]
 ws.append(cols)
 for m in data["matches"]:
     dt = m["datetime"]["th"] or m["datetime"]["iso"]
@@ -59,7 +61,7 @@ for r in range(2, ws.max_row + 1):
 autofit(ws, [20, 12, 16, 12, 30, 30, 24, 8, 12])
 
 # ---------- Sheet 2: นักกีฬา + ประเภทที่ลง ----------
-ws2 = wb.create_sheet("นักกีฬา มจธ.")
+ws2 = wb.create_sheet(f"นักกีฬา {T}")
 # รวมประเภท+คู่ ต่อคน
 byp = defaultdict(list)  # name -> list of (event, partner)
 for m in data["matches"]:
@@ -99,7 +101,7 @@ win = sum(1 for m in data["matches"] if m["result"] == "ชนะ")
 lose = sum(1 for m in data["matches"] if m["result"] == "แพ้")
 bye = sum(1 for m in data["matches"] if m["result"] == "บาย")
 pending = sum(1 for m in data["matches"] if not m["result"])
-ws3.append(["สรุปผลงานทีม มจธ.", ""])
+ws3.append([f"สรุปผลงานทีม {T}", ""])
 ws3.append(["จำนวนนักกีฬา", len(data["players"])])
 ws3.append(["จำนวนแมตช์ทั้งหมด", total])
 ws3.append(["บาย (ผ่านเข้ารอบ)", bye])
@@ -122,7 +124,7 @@ ws3.cell(9, 1).font = WHITEB; ws3.cell(9, 1).fill = HEADFILL
 ws3.cell(9, 2).font = WHITEB; ws3.cell(9, 2).fill = HEADFILL
 autofit(ws3, [26, 16])
 
-fn = "มจธ_มศวเกมส์42.xlsx"
+fn = config.EXCEL_XLSX
 wb.save(fn)
 print("บันทึก", fn)
 print(f"แมตช์ {total} | ชนะ {win} | แพ้ {lose} | รอผล {pending}")

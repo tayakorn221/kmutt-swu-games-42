@@ -200,9 +200,9 @@ footer{margin:40px 0 30px;padding-top:20px;border-top:1px solid var(--line);
 <div class="wrap">
 
   <header>
-    <div class="kicker">มศว เกมส์ ครั้งที่ 42 · แบดมินตัน</div>
-    <div class="brand"><div class="mark">มจธ<b>.</b> <span style="font-family:Sarabun;font-weight:600;font-size:.45em;color:var(--ink-soft)">ติดตามผลทีม</span></div></div>
-    <p class="subtitle">กีฬาบุคลากรมหาวิทยาลัยแห่งประเทศไทย <span class="dot">·</span> อาคารกีฬา 2 มศว องครักษ์ <span class="dot">·</span> 31 พ.ค.–4 มิ.ย. 2569</p>
+    <div class="kicker" id="kicker">มศว เกมส์ 42 · แบดมินตัน</div>
+    <div class="brand"><div class="mark" id="brandMark">มจธ<b>.</b> <span style="font-family:Sarabun;font-weight:600;font-size:.45em;color:var(--ink-soft)">ติดตามผลทีม</span></div></div>
+    <p class="subtitle" id="subtitle">กีฬาบุคลากรมหาวิทยาลัยแห่งประเทศไทย ครั้งที่ 42 มศว เกมส์ <span class="dot">·</span> อาคารกีฬา 2 มศว องครักษ์ <span class="dot">·</span> 31 พ.ค. – 4 มิ.ย. 2569</p>
     <div class="board" id="board"></div>
   </header>
 
@@ -222,7 +222,7 @@ footer{margin:40px 0 30px;padding-top:20px;border-top:1px solid var(--line);
       <span id="live" class="live off"><span class="pulse"></span><span id="liveTxt">จบการแข่งขันแล้ว · ผลครบทุกแมตช์</span></span>
       <a class="btn primary" href="summary.html" target="_blank" rel="noopener" style="margin-left:auto;text-decoration:none">🖼️ ทำการ์ดสรุปลงโซเชียล</a>
     </div>
-    <p style="margin-top:16px;font-size:12px">ทำด้วย ♥ สำหรับทีมบุคลากร มจธ. · ข้อมูลผลการแข่งขันจาก tournamentsoftware.com (บันทึกไว้เมื่อ 5 ส.ค. 2569 หลังจบการแข่งขัน)</p>
+    <p id="footNote" style="margin-top:16px;font-size:12px">ทำด้วย ♥ สำหรับทีมบุคลากร มจธ. · ข้อมูลผลการแข่งขันจาก tournamentsoftware.com (บันทึกไว้เมื่อ 5 ส.ค. 2569 หลังจบการแข่งขัน)</p>
     <p class="byline">
       <span>ออกแบบ &amp; พัฒนาโดย <span class="me">Tayakorn</span></span>
       <span class="sep">·</span>
@@ -240,7 +240,13 @@ footer{margin:40px 0 30px;padding-top:20px;border-top:1px solid var(--line);
 let DATA=[], FILTER="all", DAYKEY="all";
 const el=id=>document.getElementById(id);
 
-/* ---------- data source: สดจาก /api -> fallback data.js (ฝังในเว็บ) ---------- */
+/* ---------- ชื่องาน/ทีม: มาจาก config.py ผ่าน meta ใน data.js ----------
+   ค่าใน HTML เป็นค่าเริ่มต้นเผื่อ data.js ไม่มี meta (เว็บยังใช้ได้) */
+const META=window.KMUTT_FALLBACK||{};
+const TEAM=META.team||"มจธ.";
+const TEAM_STEM=TEAM.replace(/\.$/,""), TEAM_DOT=TEAM.endsWith(".")?"<b>.</b>":"";
+
+/* ---------- data source ---------- */
 function fromFallback(){return (window.KMUTT_FALLBACK?.matches||[]).map(m=>({...m}));}
 
 /* ---------- result classification ---------- */
@@ -315,7 +321,7 @@ function sideHTML(names,uni,isK){
   const nm=names.length?names.join("  /  "):"—";
   return `<div class="side ${isK?'kmutt':''}">
     <div class="who"><div class="nm">${esc(nm)}</div>${uni?`<div class="uni">${esc(uni)}</div>`:""}</div>
-    ${isK?'<span class="tag">มจธ.</span>':''}</div>`;
+    ${isK?`<span class="tag">${esc(TEAM)}</span>`:''}</div>`;
 }
 function esc(s){return (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
 function matchHTML(m){
@@ -399,11 +405,32 @@ function render(){
 /* ---------- load ---------- */
 function setLive(on,txt){const l=el("live");l.className="live"+(on?"":" off");
   el("liveTxt").textContent=txt;}
+// เขียนหัวเว็บจาก meta (ชื่องาน/สนาม/ทีม) — ช่วงวันคำนวณจากแมตช์จริง ไม่ต้องตั้งค่าเพิ่ม
+function dateRange(){
+  const ds=DATA.map(m=>dayInfo(m.iso)).filter(d=>d.key!=="zzz").map(d=>d.key).sort();
+  if(!ds.length)return"";
+  const a=dayInfo(ds[0]),b=dayInfo(ds[ds.length-1]);
+  return a.key===b.key?`${a.num} ${a.be}`:`${a.num} – ${b.num} ${b.be}`;
+}
+function applyMeta(){
+  const dot='&nbsp;<span class="dot">·</span>';   // &nbsp; กันตัวคั่นตกไปขึ้นต้นบรรทัดใหม่ลำพัง
+  if(META.tournamentShort||META.sport)
+    el("kicker").textContent=[META.tournamentShort,META.sport].filter(Boolean).join(" · ");
+  el("brandMark").innerHTML=`${esc(TEAM_STEM)}${TEAM_DOT} <span style="font-family:Sarabun;font-weight:600;font-size:.45em;color:var(--ink-soft)">ติดตามผลทีม</span>`;
+  // ชื่องานใน subtitle ตัดท้าย "ครั้งที่ NN …" ออก (บรรทัดบนบอกครั้งที่/ชื่อย่อไปแล้ว)
+  const series=(META.tournament||"").split(/\s*ครั้งที่/)[0].trim();
+  const parts=[series,META.venue,dateRange()].filter(Boolean).map(esc);
+  if(parts.length)el("subtitle").innerHTML=parts.join(`${dot} `);
+  document.title=`${TEAM} · ${META.tournamentShort||""} — ติดตามผล${META.sport||""}`.replace(/\s+/g," ");
+  el("footNote").innerHTML=`ทำด้วย ♥ สำหรับทีมบุคลากร ${esc(TEAM)} · ข้อมูลผลการแข่งขันจาก tournamentsoftware.com`
+    +(META.archived?" (บันทึกไว้หลังจบการแข่งขัน)":"");
+}
+
 // โหมด archive: การแข่งขันจบแล้ว อ่านผลชุดสมบูรณ์จาก data.js อย่างเดียว
 // (เดิมดึงสดจาก /api/matches ตอนแข่ง — ตัดออกแล้วเพื่อไม่ให้ผลเปลี่ยนตามต้นทาง)
 function load(){
-  setLive(false,"จบการแข่งขันแล้ว · ผลครบทุกแมตช์");
-  DATA=fromFallback();render();
+  setLive(false,META.archived?"จบการแข่งขันแล้ว · ผลครบทุกแมตช์":"ข้อมูลโปรแกรม (ในเครื่อง)");
+  DATA=fromFallback();applyMeta();render();
 }
 
 /* ---------- events ---------- */

@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
-"""Logic ขูดข้อมูลทีม มจธ. จาก bat.tournamentsoftware.com.
+"""Logic ขูดข้อมูลทีมที่ติดตาม จาก tournamentsoftware (ตั้งค่างาน/ทีมใน config.py).
 
 ใช้ร่วมกันระหว่าง:
   - extract.py        (CLI: เขียน kmutt_data.json)
   - api/matches.py    (Vercel serverless: ส่ง JSON ให้เว็บ)
 
-จุดสำคัญ: ฟังก์ชัน scrape() ดึงหน้าโปรไฟล์ผู้เล่น มจธ. แบบ "ยิงขนาน"
+จุดสำคัญ: ฟังก์ชัน scrape() ดึงหน้าโปรไฟล์ผู้เล่นทีมเรา แบบ "ยิงขนาน"
 (ThreadPoolExecutor) เพื่อให้เร็วพอสำหรับ serverless (~5 วิ แทน ~40 วิ)."""
 
 import re, html, json, os, time, hashlib, shutil, subprocess, urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-TID = "08e7fe57-56e4-47f9-b072-54c28ca55d56"
-BASE = "https://bat.tournamentsoftware.com"
+import config
+
+TID = config.TOURNAMENT_ID
+BASE = config.BASE
 HDR = {"User-Agent": "Mozilla/5.0", "X-Requested-With": "XMLHttpRequest"}
 
 
@@ -286,8 +288,8 @@ def scrape(use_cache=False, max_workers=24, log=lambda *a: None):
     players = parse_players(pc)
     log(f"  ผู้เล่นทั้งหมด: {len(players)}")
 
-    KMUTT = [pid for pid, v in players.items() if "มจธ" in v["uni"]]
-    log(f"  ผู้เล่น มจธ.: {len(KMUTT)}")
+    KMUTT = [pid for pid, v in players.items() if config.TEAM_MATCH in v["uni"]]
+    log(f"  ผู้เล่น {config.TEAM_LABEL}: {len(KMUTT)}")
 
     # ยิงขนานดึงหน้าโปรไฟล์ มจธ. ทุกคน
     htmls = {}
@@ -323,8 +325,8 @@ def scrape(use_cache=False, max_workers=24, log=lambda *a: None):
             return players[p["id"]]["uni"]
         return club_uni.get(p["club"], "")
 
-    out = {"tournament": "กีฬาบุคลากรมหาวิทยาลัยแห่งประเทศไทย ครั้งที่ 42 มศว เกมส์",
-           "sport": "แบดมินตัน", "club_uni": club_uni, "players": [], "matches": []}
+    out = {"tournament": config.TOURNAMENT_NAME,
+           "sport": config.SPORT, "club_uni": club_uni, "players": [], "matches": []}
     for pid in KMUTT:
         out["players"].append({"id": pid, "name": players[pid]["name"], "uni": players[pid]["uni"]})
 
@@ -401,7 +403,8 @@ def to_web(data, scores=None):
     """แปลง dict จาก scrape() -> โครงสร้างที่เว็บใช้ (เหมือน data.js / KMUTT_FALLBACK).
     scores: {match_id: score} เพื่อ merge สกอร์ที่ผู้ใช้กรอกเองในชีต."""
     scores = scores or {}
-    web = {"tournament": data["tournament"], "venue": "อาคารกีฬา 2 มศว องครักษ์", "matches": []}
+    web = dict(config.web_meta())
+    web["matches"] = []
     for m in data["matches"]:
         mid = m["match_id"]
         web["matches"].append({

@@ -4,8 +4,9 @@
 - data.js         : ข้อมูล fallback ฝังในเว็บ (เปิดออฟไลน์ได้)
 """
 import json, csv, io
+import config
 
-d = json.load(open("kmutt_data.json", encoding="utf-8"))
+d = json.load(open(config.DATA_JSON, encoding="utf-8"))
 
 DOW = {0:"จ.",1:"อ.",2:"พ.",3:"พฤ.",4:"ศ.",5:"ส.",6:"อา."}
 THMON = ""
@@ -30,21 +31,22 @@ def flat_rows():
         ])
     return rows
 
+T = config.TEAM_LABEL
 HEAD = ["รหัสแมตช์","วันที่","เวลา","วันที่ISO","คอร์ท","ประเภท","รอบ",
-        "คู่ มจธ. 1","คู่ มจธ. 2","คู่แข่ง 1","คู่แข่ง 2","สังกัดคู่แข่ง",
+        f"คู่ {T} 1",f"คู่ {T} 2","คู่แข่ง 1","คู่แข่ง 2","สังกัดคู่แข่ง",
         "ผล","สกอร์"]
 
 rows = flat_rows()
 
 # CSV (UTF-8 BOM ให้ Google Sheets/Excel อ่านไทยได้)
-with open("kmutt_sheet.csv", "w", encoding="utf-8-sig", newline="") as f:
+with open(config.SHEET_CSV, "w", encoding="utf-8-sig", newline="") as f:
     w = csv.writer(f)
     w.writerow(HEAD)
     w.writerows(rows)
 
-# data.js — โครงสร้างเดียวกับที่เว็บใช้
-web = {"tournament": d["tournament"], "venue": "อาคารกีฬา 2 มศว องครักษ์",
-       "matches": []}
+# data.js — โครงสร้างเดียวกับที่เว็บใช้ (meta มาจาก config.py: ชื่องาน/สนาม/ทีม/โหมด archive)
+web = dict(config.web_meta())
+web["matches"] = []
 for m in d["matches"]:
     web["matches"].append({
         "id": m["match_id"],

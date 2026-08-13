@@ -107,6 +107,7 @@ Vercel (ดึงสด)
 └── vercel.json           # ตั้งค่า build/route + region สิงคโปร์ + รันไทม์ Python
 
 สคริปต์ build (ต้องมี Python)
+├── config.py             # ⭐ ค่าตั้งต้นงาน/ทีม — แก้ไฟล์นี้ไฟล์เดียวเพื่อใช้กับรายการอื่น
 ├── scraper.py            # แกนขูด+parse (ใช้ร่วมกันทั้ง CLI และ Vercel)
 ├── extract.py            # CLI: scraper → kmutt_data.json
 ├── build_site.py         # kmutt_data.json → data.js + kmutt_sheet.csv
@@ -142,6 +143,33 @@ python build_excel.py       # สร้าง Excel ใหม่
 ```
 
 **Deploy ขึ้น Vercel:** ดู [docs/DEPLOY_vercel.md](docs/DEPLOY_vercel.md) และ [README_วิธีใช้.md](README_วิธีใช้.md)
+
+---
+
+## ♻️ ใช้ซ้ำกับรายการถัดไป (เช่น ครั้งที่ 43)
+
+ค่าที่ผูกกับ "งาน" และ "ทีม" รวมอยู่ใน [config.py](config.py) ไฟล์เดียว — ที่เหลือเป็น logic ล้วน
+
+1. clone repo นี้เป็นโปรเจกต์ใหม่ (แยกปี แยก archive) แล้วลบข้อมูลเก่า:
+   ```bash
+   rm -rf cache/ kmutt_data.json
+   ```
+2. แก้ [config.py](config.py) — ที่ต้องเปลี่ยนแน่ ๆ คือ `TOURNAMENT_ID` (GUID ท้าย URL ของทัวร์บน
+   tournamentsoftware), `TOURNAMENT_NAME`, `TOURNAMENT_SHORT`, `VENUE` และตั้ง `ARCHIVED = False`
+   ระหว่างที่ยังแข่งอยู่ · ถ้าเปลี่ยนสถาบันด้วยก็แก้ `TEAM_MATCH` / `TEAM_LABEL` / `TEAM_COLOR`
+3. สร้างข้อมูลใหม่:
+   ```bash
+   python extract.py --fresh && python build_site.py && python build_excel.py
+   ```
+
+ชื่องาน · สนาม · ชื่อทีม · แฮชแท็ก ไหลเข้าเว็บและการ์ดสรุปเองผ่าน `meta` ที่ `build_site.py`
+ฉีดลง `data.js` — ไม่ต้องแก้ HTML · ช่วงวันที่บนหัวเว็บคำนวณจากแมตช์จริง ไม่ต้องตั้งค่า
+
+> ⚠️ **ยังไม่ได้ทดสอบกับทัวร์อื่นจริง** — ครั้งที่ 43 ยังไม่เปิดระบบตอนที่แยก config นี้ออกมา
+> ถ้า tournamentsoftware เปลี่ยนโครง HTML เมื่อไหร่ ตัว parser ใน `scraper.py` ก็ต้องปรับตาม
+>
+> สิ่งที่ยัง hardcode (ตั้งใจ): สีธีมและฟอนต์ในไฟล์ HTML · ตัวย่อ/สีประจำสถาบันคู่แข่งใน
+> `UNIVERSITY_ABBR_MAP` (summary.html) — สถาบันที่ไม่อยู่ใน map จะได้สีอัตโนมัติจากชื่อ ไม่พัง
 
 ---
 

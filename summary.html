@@ -234,18 +234,23 @@ body{
 
 <script>
 /* ============================================================
-   CONFIG
+   CONFIG — ชื่องาน/ทีม/โซเชียล มาจาก config.py ผ่าน meta ใน data.js
+   ค่าหลัง || คือค่าเริ่มต้นเผื่อ data.js เก่าที่ยังไม่มี meta
    ============================================================ */
-const TOURNAMENT = "กีฬาบุคลากรมหาวิทยาลัยแห่งประเทศไทย ครั้งที่ 42 มศว เกมส์";
-const KMUTT_NAME = "มจธ.";
-const SOCIAL_HANDLE = "KMUTT Badminton";
-const HASHTAG = "#มจธ #มศวเกมส์42";
+const META = window.KMUTT_FALLBACK || {};
+const TOURNAMENT = META.tournament || "กีฬาบุคลากรมหาวิทยาลัยแห่งประเทศไทย ครั้งที่ 42 มศว เกมส์";
+const TOURNAMENT_SHORT = META.tournamentShort || "มศว เกมส์ 42";
+const SPORT = META.sport || "แบดมินตัน";
+const KMUTT_NAME = META.team || "มจธ.";
+const TEAM_COLOR = META.teamColor || "#FF6A1A";
+const SOCIAL_HANDLE = META.social || "KMUTT Badminton";
+const HASHTAG = META.hashtag || "#มจธ #มศวเกมส์42";
 const EXPORT_SCALE = 1;           // 1 = ได้ไฟล์ 1080x1350 พอดี (เพิ่มเป็น 2 ถ้าต้องการ retina)
 
 /* ตัวย่อ + สีประจำสถาบัน — สร้างจากค่า uni จริงในข้อมูล (ดู task_0)
-   ฝั่ง มจธ. ไม่มี field uni (ข้อมูล pre-filter แล้ว) จึงใช้ chip "มจธ." คงที่ */
+   ฝั่งทีมเราไม่มี field uni (ข้อมูล pre-filter แล้ว) จึงใช้ chip ชื่อทีมคงที่ */
 const UNIVERSITY_ABBR_MAP = {
-  "มจธ.":                              {color:"#FF6A1A"},
+  [KMUTT_NAME]:                        {color:TEAM_COLOR},
   "ม.เชียงใหม่":                        {color:"#6A3FA0"},
   "ม.เกษตรศาสตร์":                      {color:"#1F7A4D"},
   "ม.สุโขทัยธรรมาธิราช":                 {color:"#0E8C84", short:"มสธ."},
@@ -458,29 +463,29 @@ function renderCard(date, mode){
 
   const header = `<div class="hd">
     <div class="hd-row">
-      <div class="hd-mark"><b>มศว</b> GAMES 42 · กีฬาบุคลากรมหาวิทยาลัยฯ ครั้งที่ 42</div>
+      <div class="hd-mark"><b>${esc(TOURNAMENT_SHORT)}</b> · ${esc(SPORT)}</div>
       <div class="hd-modepill ${mode}">${mode==="results"?"ผล":"พรีวิว"}</div>
     </div>
     <div class="hd-bar">
-      <span class="bar-title">ทีม <b>มจธ.</b> · ${esc(titleTxt)}</span>
+      <span class="bar-title">ทีม <b>${esc(KMUTT_NAME)}</b> · ${esc(titleTxt)}</span>
       <span class="bar-date">${esc(dShort)}</span>
       ${firstT?`<span class="bar-start">เริ่ม ${esc(firstT)}</span>`:""}
     </div>
-    <div class="hd-sub">แบดมินตัน · ${matches.length?`<b>${matches.length}</b> แมตช์ของทีม มจธ.`:"ทีม มจธ."}${recordHTML}</div>
+    <div class="hd-sub">${esc(SPORT)} · ${matches.length?`<b>${matches.length}</b> แมตช์ของทีม ${esc(KMUTT_NAME)}`:`ทีม ${esc(KMUTT_NAME)}`}${recordHTML}</div>
   </div>`;
 
   const cols = matches.length>8 ? 2 : 1;   // วันหนาแน่น (>8 แมตช์) ใช้ 2 คอลัมน์
   let body;
   if(!matches.length){
-    body = `<div class="body"><div class="empty"><div class="big">ไม่มีแมตช์ของทีม มจธ. ในวันนี้</div><div>เลือกวันอื่นจากแถบเครื่องมือด้านบน</div></div></div>`;
+    body = `<div class="body"><div class="empty"><div class="big">ไม่มีแมตช์ของทีม ${esc(KMUTT_NAME)} ในวันนี้</div><div>เลือกวันอื่นจากแถบเครื่องมือด้านบน</div></div></div>`;
   }else{
     body = `<div class="body"><div class="rows" style="--cols:${cols}">${matches.map(m=>rowHTML(m,mode)).join("")}</div></div>`;
   }
 
   const footer = `<div class="ft">
-    <div class="ft-cheer">เชียร์ <span>มจธ.</span> ไปกับ <span>${esc(SOCIAL_HANDLE)}</span></div>
+    <div class="ft-cheer">เชียร์ <span>${esc(KMUTT_NAME)}</span> ไปกับ <span>${esc(SOCIAL_HANDLE)}</span></div>
     <div class="ft-row">
-      <span class="ft-mark"><b>มจธ.</b> · มศว เกมส์ 42 · แบดมินตัน</span>
+      <span class="ft-mark"><b>${esc(KMUTT_NAME)}</b> · ${esc(TOURNAMENT_SHORT)} · ${esc(SPORT)}</span>
       <span class="ft-tag">${esc(HASHTAG)}</span>
     </div>
     <div class="ft-by">ออกแบบ &amp; พัฒนาโดย <b>Tayakorn</b> · github.com/tayakorn221</div>

@@ -1,6 +1,13 @@
 window.KMUTT_FALLBACK = {
  "tournament": "กีฬาบุคลากรมหาวิทยาลัยแห่งประเทศไทย ครั้งที่ 42 มศว เกมส์",
+ "tournamentShort": "มศว เกมส์ 42",
+ "sport": "แบดมินตัน",
  "venue": "อาคารกีฬา 2 มศว องครักษ์",
+ "team": "มจธ.",
+ "teamColor": "#FF6A1A",
+ "social": "KMUTT Badminton",
+ "hashtag": "#มจธ #มศวเกมส์42",
+ "archived": true,
  "matches": [
   {
    "id": "",
